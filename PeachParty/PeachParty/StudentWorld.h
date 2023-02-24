@@ -8,7 +8,7 @@
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 //#include "GraphObject.h"
-class GraphObject; // TODO: WTF
+class Actor; // TODO: WTF
 
 class StudentWorld : public GameWorld
 {
@@ -20,7 +20,9 @@ class StudentWorld : public GameWorld
 
     private:
         
-        std::vector<GraphObject*> objects;
+        std::vector<Actor*> objects;
+    Actor* peach;
+    Actor* yoshi;
         Board board;
         
 };

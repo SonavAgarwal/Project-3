@@ -9,8 +9,9 @@ class Actor: public GraphObject {
     public:
         Actor(const int imageID, const int startX, const int startY);
         virtual void doSomething() = 0;
+        bool isActive() const;
     private:
-        
+        bool active;
 };
 
 class PlayerAvatar: public Actor {

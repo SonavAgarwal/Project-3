@@ -8,8 +8,13 @@
 #include "GameConstants.h"
 
 
-Actor::Actor(const int imageID, const int startX, const int startY) : GraphObject(imageID, startX, startY) {
-    
+Actor::Actor(const int imageID, const int startX, const int startY) : GraphObject(imageID, startX, startY, direction, depth) {
+    active = true;
+    setDirection(<#int d#>)
+}
+
+bool Actor::isActive() const {
+    return active;
 }
 
 

@@ -36,17 +36,17 @@ int StudentWorld::init()
                     break;
                 }
                 case Board::blue_coin_square: {
-                    GraphObject* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
                     objects.push_back(gop);
                     break;
                 }
                 case Board::player: {
-                    GraphObject* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
                     objects.push_back(gop);
-                    gop = new PlayerAvatar(IID_PEACH, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
-                    objects.push_back(gop);
-                    gop = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
-                    objects.push_back(gop);
+                    peach = new PlayerAvatar(IID_PEACH, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    objects.push_back(peach);
+                    yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    objects.push_back(yoshi);
                     break;
                 }
                     
@@ -70,11 +70,32 @@ int StudentWorld::move()
     // Notice that the return value GWSTATUS_NOT_IMPLEMENTED will cause our framework to end the game.
 
     
+    // ask all objects to do something
     
+    for (vector<Actor*>::iterator it = objects.begin(); it != objects.end(); it++) {
+        if (!(*it)->isActive()) {
+            (*it)->doSomething();
+        }
+    }
+    
+    // delete dead
+    
+    for (vector<Actor*>::iterator it = objects.begin(); it != objects.end(); it++) {
+        if (!(*it)->isActive()) {
+            delete *it;
+            it = objects.erase(it);
+        }
+    }
+    
+    // status text update
     setGameStatText("Game will end in a few seconds");
     
+    
+    // game out of time?
     if (timeRemaining() <= 0) {
-        
+        playSound(SOUND_GAME_FINISHED);
+        setFinalScore(6, 9); // TODO: FIX
+        return GWSTATUS_PEACH_WON; // TODO: FIX
     }
     
 	return GWSTATUS_CONTINUE_GAME;
