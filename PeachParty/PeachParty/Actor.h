@@ -7,7 +7,7 @@
 
 class Actor: public GraphObject {
     public:
-        Actor(const int imageID, const int startX, const int startY);
+        Actor(const int imageID, const int startX, const int startY, const int direction, const int depth);
         virtual void doSomething() = 0;
         bool isActive() const;
     private:
@@ -16,15 +16,17 @@ class Actor: public GraphObject {
 
 class PlayerAvatar: public Actor {
 public:
-    PlayerAvatar(const int imageID, const int startX, const int startY);
+    PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum);
     virtual void doSomething();
+private:
+    int m_playerNum;
 };
 
 
 
 class Square: public Actor {
     public:
-        Square(const int imageID, const int startX, const int startY);
+        Square(const int imageID, const int startX, const int startY, const int direction);
         virtual void doSomething();
     private:
     

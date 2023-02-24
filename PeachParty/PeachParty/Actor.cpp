@@ -8,9 +8,9 @@
 #include "GameConstants.h"
 
 
-Actor::Actor(const int imageID, const int startX, const int startY) : GraphObject(imageID, startX, startY, direction, depth) {
+Actor::Actor(const int imageID, const int startX, const int startY, const int direction, const int depth) : GraphObject(imageID, startX, startY, direction, depth) {
     active = true;
-    setDirection(<#int d#>)
+//    setDirection(int d)
 }
 
 bool Actor::isActive() const {
@@ -18,8 +18,9 @@ bool Actor::isActive() const {
 }
 
 
-PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY) : Actor(imageID, startX, startY) {
+PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum) : Actor(imageID, startX, startY, right, 1) {
     
+    m_playerNum = playerNum;
 }
 
 
@@ -28,7 +29,7 @@ void PlayerAvatar::doSomething() {
 }
 
 
-Square::Square(const int imageID, const int startX, const int startY) : Actor(imageID, startX, startY) {
+Square::Square(const int imageID, const int startX, const int startY, const int direction) : Actor(imageID, startX, startY, direction, 1) {
     
 }
 
@@ -36,6 +37,6 @@ void Square::doSomething() {
     //
 }
 
-CoinSquare::CoinSquare(const int startX, const int startY) : Square(IID_BLUE_COIN_SQUARE, startX, startY) {
+CoinSquare::CoinSquare(const int startX, const int startY) : Square(IID_BLUE_COIN_SQUARE, startX, startY, right) {
     
 }

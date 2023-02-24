@@ -13,16 +13,20 @@ class Actor; // TODO: WTF
 class StudentWorld : public GameWorld
 {
     public:
-      StudentWorld(std::string assetPath);
-      virtual int init();
-      virtual int move();
-      virtual void cleanUp();
+        StudentWorld(std::string assetPath);
+        virtual int init();
+        virtual int move();
+        virtual void cleanUp();
+    
+        Board& getBoard();
+    
+        ~StudentWorld(); // TODO: IS THIS NECESSARY
 
     private:
         
         std::vector<Actor*> objects;
-    Actor* peach;
-    Actor* yoshi;
+        Actor* peach;
+        Actor* yoshi;
         Board board;
         
 };

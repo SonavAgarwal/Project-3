@@ -43,10 +43,11 @@ int StudentWorld::init()
                 case Board::player: {
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
                     objects.push_back(gop);
-                    peach = new PlayerAvatar(IID_PEACH, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    peach = new PlayerAvatar(IID_PEACH, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 1);
                     objects.push_back(peach);
-                    yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
-                    objects.push_back(yoshi);
+//                    yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+//                    objects.push_back(yoshi);
+                    // TODO: BRING HIM BACK
                     break;
                 }
                     
@@ -58,7 +59,7 @@ int StudentWorld::init()
     // initialize data structure
     
     
-	startCountdownTimer(20);  // this placeholder causes timeout after 5 seconds
+	startCountdownTimer(5);  // this placeholder causes timeout after 5 seconds
     
     
     return GWSTATUS_CONTINUE_GAME;
@@ -83,7 +84,8 @@ int StudentWorld::move()
     for (vector<Actor*>::iterator it = objects.begin(); it != objects.end(); it++) {
         if (!(*it)->isActive()) {
             delete *it;
-            it = objects.erase(it);
+            it = objects.erase(it); // TODO: OH LORDY LORD
+            it--;
         }
     }
     
@@ -103,4 +105,19 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+    for (vector<Actor*>::iterator it = objects.begin(); it != objects.end(); it++) {
+        delete *it;
+        it = objects.erase(it);
+        it--; // TODO: OH LORDY LORD
+    }
+}
+
+
+Board& StudentWorld::getBoard() {
+    return board;
+}
+
+
+StudentWorld::~StudentWorld() {
+    cleanUp();
 }
