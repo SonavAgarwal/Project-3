@@ -14,7 +14,15 @@ class Actor: public GraphObject {
         bool active;
 };
 
-class PlayerAvatar: public Actor {
+
+class Avatar: public Actor {
+public:
+    Avatar(const int imageID, const int startX, const int startY);
+    virtual void doSomething() = 0;
+private:
+};
+
+class PlayerAvatar: public Avatar {
 public:
     PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum);
     virtual void doSomething();

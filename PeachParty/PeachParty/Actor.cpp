@@ -17,8 +17,11 @@ bool Actor::isActive() const {
     return active;
 }
 
+Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(imageID, startX, startY, right, 1) {
+    
+}
 
-PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum) : Actor(imageID, startX, startY, right, 1) {
+PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum) : Avatar(imageID, startX, startY) {
     
     m_playerNum = playerNum;
 }
