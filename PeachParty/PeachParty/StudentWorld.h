@@ -9,6 +9,7 @@
 
 //#include "GraphObject.h"
 class Actor; // TODO: WTF
+class PlayerAvatar; // TODO: WTF
 
 class StudentWorld : public GameWorld
 {
@@ -19,16 +20,25 @@ class StudentWorld : public GameWorld
         virtual void cleanUp();
     
         Board& getBoard();
+        bool isWalkable(int screenX, int screenY); // CANT BE CONST BC OF STUPID BOARD CLASS
+        int getBankCoins() const;
+        void changeBankCoins(int delta);
+    
     
         ~StudentWorld(); // TODO: IS THIS NECESSARY
 
     private:
         
-        std::vector<Actor*> objects;
-        Actor* peach;
-        Actor* yoshi;
-        Board board;
+        std::vector<Actor*> m_objects;
+        PlayerAvatar* m_peach;
+        PlayerAvatar* m_yoshi;
+        Board m_board;
+    
+        int m_bank_coins;
         
+        void addGridObject(Actor* gridObjectPointer);
+
+    
 };
 
 #endif // STUDENTWORLD_H_
