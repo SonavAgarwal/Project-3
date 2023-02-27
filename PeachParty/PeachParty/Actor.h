@@ -10,7 +10,7 @@ class StudentWorld;
 class Actor: public GraphObject {
     public:
         Actor(const int imageID, const int startX, const int startY, const int direction, const int depth);
-        virtual void doSomething(); // TODO: PURE VIRTUAL? ASK
+        virtual void doSomething() = 0;
         bool isActive() const;
         void setIsActive(bool newActive);
         void setStudentWorld(StudentWorld* sw);
@@ -24,7 +24,7 @@ class Actor: public GraphObject {
 class Avatar: public Actor {
 public:
     Avatar(const int imageID, const int startX, const int startY);
-    virtual void doSomething();
+    virtual void doSomething() = 0;
     int getTicksToMove() const;
     void setTicksToMove(int ticksToMove);
     bool canWalkInDirection(int walkDirection) const;

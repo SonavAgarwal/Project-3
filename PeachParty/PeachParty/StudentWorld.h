@@ -8,8 +8,8 @@
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 //#include "GraphObject.h"
-class Actor; // TODO: WTF
-class PlayerAvatar; // TODO: WTF
+class Actor;
+class PlayerAvatar;
 
 class StudentWorld : public GameWorld
 {

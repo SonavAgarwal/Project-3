@@ -11,11 +11,6 @@ Actor::Actor(const int imageID, const int startX, const int startY, const int di
     m_active = true;
     m_studentWorld = nullptr;
     
-//    setDirection(int d)
-}
-
-void Actor::doSomething() {
-    //
 }
 
 bool Actor::isActive() const {
@@ -42,11 +37,6 @@ Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(im
     m_ticks_to_move = 0;
 }
 
-
-void Avatar::doSomething() {
-    //
-}
-
 int Avatar::getTicksToMove() const {
     return m_ticks_to_move;
 }
@@ -62,17 +52,16 @@ bool Avatar::canWalkInDirection(int walkDirection) const {
     int distance = 16;
     if (walkDirection == left || walkDirection == down) distance = 2;
     
-    getPositionInThisDirection(walkDirection, distance, sX, sY); // TODO: IS THERE A BETTER CONSTANT FOR 16
+    getPositionInThisDirection(walkDirection, distance, sX, sY);
     
-//    std::cerr << "SUSSY" << std::endl;
-//    std::cerr << sX << " " << sY << std::endl;
+    // TODO: IS THERE A BETTER CONSTANT FOR 16
+    
     return getStudentWorld()->isWalkable(sX, sY);
     
 }
 
 void Avatar::setWalkDirection(int walkDirection) {
     
-//    std::cerr << "SETTING DIRECTION TO " << walkDirection << std::endl;
     m_walk_direction = walkDirection;
 }
 
@@ -108,9 +97,7 @@ int PlayerAvatar::getDieRoll() const {
 
 
 void PlayerAvatar::doSomething() {
-    
-//    std::cerr << "peach gonna do sumn" << std::endl;
-        
+            
     if (m_waiting_to_roll) {
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
@@ -147,11 +134,6 @@ void PlayerAvatar::doSomething() {
         
         int nX = getX(), nY = getY();
         getPositionInThisDirection(getWalkDirection(), 2, nX, nY);
-        
-//        std::cerr << "-----" << std::endl;
-//        std::cerr << nX << " " << nY << std::endl;
-//        std::cerr << "-----" << std::endl;
-//        std::cerr << getWalkDirection()<< std::endl;
         
         moveTo(nX, nY);
         setTicksToMove(getTicksToMove() - 1);

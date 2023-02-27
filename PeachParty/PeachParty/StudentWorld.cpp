@@ -84,7 +84,6 @@ int StudentWorld::move()
     
     // ask all objects to do something
     
-//    std::cerr << "NEW TICK" << std::endl << std::endl;
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         if ((*it)->isActive()) {
             (*it)->doSomething();
@@ -164,8 +163,6 @@ Board& StudentWorld::getBoard() {
 bool StudentWorld::isWalkable(int screenX, int screenY) {
     Board::GridEntry ge = m_board.getContentsOf(screenX / SPRITE_WIDTH, screenY / SPRITE_HEIGHT); // should round down properly?? I hope
     
-//    std::cerr << "isWalkable" << std::endl;
-//    std::cerr << ge << std::endl;
     if (ge == Board::empty) return false;
     else return true;
 }
