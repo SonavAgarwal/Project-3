@@ -43,6 +43,7 @@ Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(im
     m_ticks_to_move = 0;
     m_squares_to_move = 0; // TODO: WHAT TO CONSTRUCT WITH
     m_moving = false;
+    m_ticks_since_moved = 10000; // infinity TODO: WHAT
     
 }
 
@@ -55,6 +56,9 @@ void Avatar::setTicksToMove(int ticksToMove) {
 }
 
 bool Avatar::canWalkInDirection(int walkDirection) const {
+    
+    if (walkDirection == -1) return false;
+    
     int sX = getX();
     int sY = getY();
     
@@ -89,18 +93,67 @@ void Avatar::rollMove(int maxRoll) {
     setTicksToMove(m_squares_to_move * 8);
     m_moving = true;
 }
+
 void Avatar::move() {
     int nX = getX(), nY = getY();
     getPositionInThisDirection(getWalkDirection(), 2, nX, nY);
     
     moveTo(nX, nY);
     setTicksToMove(getTicksToMove() - 1);
+    
+    if (getTicksToMove() == 0) m_moving = false;
+}
+
+void Avatar::handleTurningPoint() {
+    if (!canWalkInDirection(getWalkDirection())) {
+        if (getWalkDirection() == right || getWalkDirection() == left) {
+            if (canWalkInDirection(up)) setWalkDirection(up);
+            else setWalkDirection(down); // TODO: VERIFY THIS ASSUMPTION IS OK
+        } else { // TODO: ALSO ASSUMPTION HERE only 4 direcs?
+            if (canWalkInDirection(right)) setWalkDirection(right);
+            else setWalkDirection(left); // TODO: VERIFY THIS ASSUMPTION IS OK
+        }
+        
+        updateSpriteDirection();
+    }
 }
 
 bool Avatar::getMoving() const {
     return m_moving;
 }
 
+void Avatar::setMoving(bool newMoving) {
+    m_moving = newMoving;
+}
+
+void Avatar::pointInRandomValidDirection() {
+    
+    int testDirection = randInt(0, 3) * 90;
+    while (!canWalkInDirection(testDirection)) {
+        testDirection += 90;
+        testDirection %= 360;
+    }
+    
+    setWalkDirection(testDirection);
+    
+    updateSpriteDirection();
+}
+
+void Avatar::updateSpriteDirection() {
+    if (getWalkDirection() == left) setDirection(left);
+    else setDirection(right);
+}
+
+bool Avatar::isAtFork() {
+    int otherDirectionCount = 0;
+    for (int testDir = 0; testDir < 360; testDir += 90) {
+        if (getWalkDirection() == testDir) continue;
+        
+        if (canWalkInDirection(testDir)) otherDirectionCount++;
+    }
+    
+    return otherDirectionCount > 1;
+}
 
 
 // #####################################
@@ -109,7 +162,6 @@ bool Avatar::getMoving() const {
 PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum) : Avatar(imageID, startX, startY) {
     
     m_playerNum = playerNum;
-    m_waiting_to_roll = true;
     m_coins = 0;
     m_stars = 0;
 }
@@ -130,11 +182,19 @@ void PlayerAvatar::changeStars(int delta) {
 
 void PlayerAvatar::doSomething() {
             
-    if (!getMoving()) {
+    if (!getMoving()) { // waiting to roll
+        
+        if (!canWalkInDirection(getWalkDirection())) {
+            pointInRandomValidDirection();
+        }
+        
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
             case ACTION_ROLL:
                 rollMove(10);
+                break;
+            case ACTION_FIRE:
+                // TODO: CODE FIRING
                 break;
             default:
                 return;
@@ -143,30 +203,91 @@ void PlayerAvatar::doSomething() {
     
     if (getMoving()) {
         
-        // if avatar on directional square
+        // if avatar on directional square // TODO: do in directional square
         
         // else if at fork
         
         // else
-        if (!canWalkInDirection(getWalkDirection())) {
-            if (getWalkDirection() == right || getWalkDirection() == left) {
-                if (canWalkInDirection(up)) setWalkDirection(up);
-                else setWalkDirection(down); // TODO: VERIFY THIS ASSUMPTION IS OK
-            } else { // TODO: ALSO ASSUMPTION HERE only 4 direcs?
-                if (canWalkInDirection(right)) setWalkDirection(right);
-                else setWalkDirection(left); // TODO: VERIFY THIS ASSUMPTION IS OK
-            }
+        if (isAtFork()) {
+            int action = getStudentWorld()->getAction(m_playerNum);
+            if (action == ACTION_NONE) return;
+            if ((action == ACTION_UP && canWalkInDirection(up) && getWalkDirection() != down) ||
+                (action == ACTION_LEFT && canWalkInDirection(left) && getWalkDirection() != right) ||
+                (action == ACTION_RIGHT && canWalkInDirection(right) && getWalkDirection() != left) ||
+                (action == ACTION_DOWN && canWalkInDirection(down) && getWalkDirection() != up)) {
+                
+                // valid direction
+                
+                // get new direction
+                
+                int newDir = right;
+                switch (action) {
+                    case ACTION_UP:
+                        newDir = up;
+                        break;
+                    case ACTION_DOWN:
+                        newDir = down;
+                        break;
+                    case ACTION_LEFT:
+                        newDir = left;
+                        break;
+                    case ACTION_RIGHT:
+                        newDir = right;
+                        break;
+                }
+                
+                setWalkDirection(newDir);
+                updateSpriteDirection();
+                
+                
+            } else return;
             
-            if (getWalkDirection() == left) setDirection(left);
-            else setDirection(right);
+        } else {
+            handleTurningPoint();
         }
         
         move();
         
-        if (getTicksToMove() == 0) m_waiting_to_roll = true;
+//        if (getTicksToMove() == 0) m_waiting_to_roll = true; // TODO: IN BOO AND BOWSER NEED EXTRA STUFF AFTER
         
     }
     
+}
+
+void PlayerAvatar::swapCoins(PlayerAvatar* other) {
+    int tempCoins = other->m_coins;
+    other->m_coins = m_coins;
+    m_coins = tempCoins;
+}
+
+void PlayerAvatar::swapStars(PlayerAvatar* other) {
+    int tempStars = other->m_stars;
+    other->m_stars = m_stars;
+    m_stars = tempStars;
+}
+
+void PlayerAvatar::swapMovement(PlayerAvatar* other) {
+    
+    // swap ticks to move
+    int tempTTM = other->getTicksToMove();
+    other->setTicksToMove(getTicksToMove());
+    setTicksToMove(tempTTM);
+    
+    // swap state
+    bool tempMoving = other->getMoving();
+    other->setMoving(getMoving());
+    setMoving(tempMoving);
+    
+    // swap walk direction
+    int tempWalkDirection = other->getWalkDirection();
+    other->setWalkDirection(getWalkDirection());
+    setWalkDirection(tempWalkDirection);
+    
+    // swap sprite direction
+    int tempSpriteDirection = other->getDirection();
+    other->setDirection(getDirection());
+    setDirection(tempSpriteDirection);
+
 }
 
 
@@ -182,9 +303,9 @@ Square::Square(const int imageID, const int startX, const int startY, const int 
     
 }
 
-void Square::doSomething() {
-    //
-}
+//void Square::doSomething() {
+//    //
+//}
 
 // #####################################
 // COINSQUARE : ACTOR

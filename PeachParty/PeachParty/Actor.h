@@ -33,14 +33,21 @@ public:
     
     int getSquaresToMove() const;
     void rollMove(int maxRoll);
+    void handleTurningPoint();
     void move();
     bool getMoving() const;
-    
+    void pointInRandomValidDirection();
+    void updateSpriteDirection(); // TODO: MAKE SOME THINGS PRIVATE
+    bool isAtFork();
+    void setMoving(bool newMoving);
+//    bool keyDirectionOpposesCurrentDirection();
+        
 private:
     int m_ticks_to_move;
     int m_walk_direction;
     int m_squares_to_move;
     bool m_moving;
+    int m_ticks_since_moved;
 };
 
 class PlayerAvatar: public Avatar {
@@ -54,6 +61,11 @@ public:
     void changeStars(int delta);
     int getDieRoll() const;
     
+    void swapCoins(PlayerAvatar* other);
+    void swapStars(PlayerAvatar* other);
+    // TODO: get a vortex
+    void swapMovement(PlayerAvatar* other);
+    
 private:
     int m_playerNum;
 //    bool m_waiting_to_roll;
@@ -66,7 +78,7 @@ private:
 class Square: public Actor {
     public:
         Square(const int imageID, const int startX, const int startY, const int direction);
-        virtual void doSomething(); // = 0; TODO: SHOULD THIS BE PURE VIRTUAL
+        virtual void doSomething() = 0; // TODO: SHOULD THIS BE PURE VIRTUAL
     private:
     
 };
