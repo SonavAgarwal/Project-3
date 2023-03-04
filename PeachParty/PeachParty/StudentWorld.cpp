@@ -220,6 +220,17 @@ void StudentWorld::changeBankCoins(int delta) { // TODO: do we need a safeguard
     m_bank_coins += delta;
 }
 
+PlayerAvatar* StudentWorld::getPlayerWithNumber(int playerNum) const {
+    switch (playerNum) {
+        case 1:
+            return m_peach;
+        case 2:
+            return m_yoshi;
+        default:
+            return nullptr;
+    }
+}
+
 StudentWorld::~StudentWorld() {
     cleanUp();
 }

@@ -34,6 +34,10 @@ StudentWorld* Actor::getStudentWorld() const {
     return m_studentWorld;
 }
 
+bool Actor::isOn(Actor *other) const {
+    return (getX() == other->getX()) && (getY() == other->getY());
+}
+
 // #####################################
 // AVATAR : ACTOR
 
@@ -43,8 +47,12 @@ Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(im
     m_ticks_to_move = 0;
     m_squares_to_move = 0; // TODO: WHAT TO CONSTRUCT WITH
     m_moving = false;
-    m_ticks_since_moved = 10000; // infinity TODO: WHAT
+    m_just_landed = false; // infinity TODO: WHAT
     
+}
+
+void Avatar::doSomething() {
+    m_just_landed = false;;
 }
 
 int Avatar::getTicksToMove() const {
@@ -101,7 +109,10 @@ void Avatar::move() {
     moveTo(nX, nY);
     setTicksToMove(getTicksToMove() - 1);
     
-    if (getTicksToMove() == 0) m_moving = false;
+    if (getTicksToMove() == 0) {
+        m_moving = false;
+        m_just_landed = true;
+    }
 }
 
 void Avatar::handleTurningPoint() {
@@ -155,6 +166,19 @@ bool Avatar::isAtFork() {
     return otherDirectionCount > 1;
 }
 
+bool Avatar::getJustLanded() const {
+    return m_just_landed;
+}
+
+bool Avatar::justLandedOn(Actor *other) const {
+    return (m_just_landed && isOn(other));
+}
+
+bool Avatar::isMovingOver(Actor *other) const {
+    return (m_moving && isOn(other));
+}
+
+
 
 // #####################################
 // PLAYERAVATAR : AVATAR
@@ -175,12 +199,14 @@ int PlayerAvatar::getStars() const {
 }
 void PlayerAvatar::changeCoins(int delta) { // TODO: should these auto cap
     m_coins += delta;
+    if (m_coins < 0) m_coins = 0;
 }
 void PlayerAvatar::changeStars(int delta) {
     m_coins -= delta;
 }
 
 void PlayerAvatar::doSomething() {
+    Avatar::doSomething();
             
     if (!getMoving()) { // waiting to roll
         
@@ -266,7 +292,7 @@ void PlayerAvatar::swapStars(PlayerAvatar* other) {
     m_stars = tempStars;
 }
 
-void PlayerAvatar::swapMovement(PlayerAvatar* other) {
+void PlayerAvatar::swapMovement(PlayerAvatar* other) { // TODO: think if swap just landed
     
     // swap ticks to move
     int tempTTM = other->getTicksToMove();
@@ -303,9 +329,15 @@ Square::Square(const int imageID, const int startX, const int startY, const int 
     
 }
 
-//void Square::doSomething() {
-//    //
-//}
+void Square::doSomething() {
+    if (!isActive()) return; // TODO: DONT NEED?
+    
+    for (int pN = 1; pN <= 2; pN++) {
+        PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
+        
+        handlePlayerLand(player);
+    }
+}
 
 // #####################################
 // COINSQUARE : ACTOR
@@ -315,21 +347,50 @@ CoinSquare::CoinSquare(const int startX, const int startY, bool adds) : Square(a
     else m_delta_coins = -3;
 }
 
-void CoinSquare::doSomething() {
-    if (!isActive()) return;
-    
-    
-}
+//void CoinSquare::doSomething() { // TODO: SEE IF CAN REFACTOR WITH PARENT DOSOMETHING ALWAYS DOING STUFF FOR BOTH OR SOMETHING
+//    if (!isActive()) return; // TODO: DONT NEED?
+//
+//    for (int pN = 1; pN <= 2; pN++) {
+//        PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
+//
+//        if (player->justLandedOn(this)) {
+//            player->changeCoins(m_delta_coins); // change coins already caps it
+//            if (m_delta_coins >= 0) getStudentWorld()->playSound(SOUND_GIVE_COIN);
+//            else getStudentWorld()->playSound(SOUND_TAKE_COIN);
+//        }
+//
+//    }
+//
+//}
+
+void CoinSquare::handlePlayerLand(<#PlayerAvatar *player#>)
 
 // #####################################
 // STARSQUARE : ACTOR
 
 StarSquare::StarSquare(const int startX, const int startY) : Square(IID_STAR_SQUARE, startX, startY, right) {
+    
+    
 }
 
 void StarSquare::doSomething() {
-    if (!isActive()) return;
     
+    for (int pN = 1; pN <= 2; pN++) {
+        PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
+        
+        //  player just landed on this or  player is moving over this
+        if (player->justLandedOn(this) || player->isMovingOver(this)) { // TODO: check 2nd condition
+            
+            if (player->getCoins() < 20) return;
+            else {
+                player->changeCoins(-20);
+                player->changeStars(1);
+                getStudentWorld()->playSound(SOUND_GIVE_STAR);
+            }
+            
+        }
+        
+    }
     
 }
 
@@ -342,7 +403,13 @@ DirectionalSquare::DirectionalSquare(const int startX, const int startY, int dir
 void DirectionalSquare::doSomething() {
     if (!isActive()) return;
     
-    
+    for (int pN = 1; pN <= 2; pN++) {
+        PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
+        
+        if (player->justLandedOn(this) || player->isMovingOver(this))
+        
+        
+    }
 }
 
 // #####################################

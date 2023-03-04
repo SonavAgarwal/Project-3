@@ -24,6 +24,8 @@ class StudentWorld : public GameWorld
         int getBankCoins() const;
         void changeBankCoins(int delta);
     
+        PlayerAvatar* getPlayerWithNumber(int playerNum) const;
+    
     
         ~StudentWorld(); // TODO: IS THIS NECESSARY
 

@@ -96,6 +96,51 @@
 			<key>uniqueIdentifier</key>
 			<string>246F2D2D-8154-42DF-A283-6FD1B5596D96</string>
 		</dict>
+		<key>266D1F25-05F7-42A1-9999-C0277842C87B</key>
+		<dict>
+			<key>auxiliaryLogUniqueIdentifier</key>
+			<string>DA6AFFB1-0A91-451A-900F-EA76EBA31164</string>
+			<key>auxiliaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>className</key>
+			<string>IDESchemeActionsInvocationRecord</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>com.apple.dt.IDE.LaunchSchemeAction</string>
+			<key>fileName</key>
+			<string>Run-PeachParty-2023.03.04_15-47-33--0800.xcresult</string>
+			<key>hasAuxiliaryLog</key>
+			<true/>
+			<key>hasConsoleLog</key>
+			<true/>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>PeachParty project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>PeachParty</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Run PeachParty</string>
+			<key>timeStartedRecording</key>
+			<real>699666453.94465899</real>
+			<key>timeStoppedRecording</key>
+			<real>0.0</real>
+			<key>title</key>
+			<string>Run PeachParty</string>
+			<key>uniqueIdentifier</key>
+			<string>266D1F25-05F7-42A1-9999-C0277842C87B</string>
+		</dict>
 		<key>3B9585B1-5794-48D3-A8BD-0CDBDEAEB8E9</key>
 		<dict>
 			<key>auxiliaryLogUniqueIdentifier</key>
