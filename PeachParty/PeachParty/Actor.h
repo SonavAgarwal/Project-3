@@ -30,9 +30,17 @@ public:
     bool canWalkInDirection(int walkDirection) const;
     int getWalkDirection() const;
     void setWalkDirection(int walkDirection);
+    
+    int getSquaresToMove() const;
+    void rollMove(int maxRoll);
+    void move();
+    bool getMoving() const;
+    
 private:
     int m_ticks_to_move;
     int m_walk_direction;
+    int m_squares_to_move;
+    bool m_moving;
 };
 
 class PlayerAvatar: public Avatar {
@@ -48,8 +56,7 @@ public:
     
 private:
     int m_playerNum;
-    bool m_waiting_to_roll;
-    int m_die_roll;
+//    bool m_waiting_to_roll;
     int m_coins;
     int m_stars;
 };
@@ -71,5 +78,44 @@ class CoinSquare: public Square {
     private:
         int m_delta_coins;
 };
+
+
+class StarSquare: public Square {
+    public:
+        StarSquare(const int startX, const int startY);
+        virtual void doSomething();
+};
+
+
+class DirectionalSquare: public Square {
+    public:
+        DirectionalSquare(const int startX, const int startY, int direction);
+        virtual void doSomething();
+    private:
+//        int forcingDirection;
+};
+
+
+class BankSquare: public Square {
+    public:
+    BankSquare(const int startX, const int startY);
+        virtual void doSomething();
+};
+
+
+class EventSquare: public Square {
+    public:
+        EventSquare(const int startX, const int startY);
+        virtual void doSomething();
+};
+
+
+
+class DroppingSquare: public Square {
+    public:
+        DroppingSquare(const int startX, const int startY);
+        virtual void doSomething();
+};
+
 
 #endif // ACTOR_H_

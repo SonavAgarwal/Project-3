@@ -40,11 +40,56 @@ int StudentWorld::init()
                 case Board::empty: {
                     break;
                 }
+                    
+                // SQUARES
                 case Board::blue_coin_square: {
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
                     addGridObject(gop);
                     break;
                 }
+                case Board::red_coin_square: {
+                    Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, false);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::bank_square: {
+                    Actor* gop = new BankSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::down_dir_square: {
+                    Actor* gop = new DirectionalSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, Actor::down);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::up_dir_square: {
+                    Actor* gop = new DirectionalSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, Actor::up);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::left_dir_square: {
+                    Actor* gop = new DirectionalSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, Actor::left);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::right_dir_square: {
+                    Actor* gop = new DirectionalSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, Actor::right);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::event_square: {
+                    Actor* gop = new EventSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::star_square: {
+                    Actor* gop = new StarSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    addGridObject(gop);
+                    break;
+                }
+                    
+                // AVATARS
+                
                 case Board::player: {
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
                     addGridObject(gop);
@@ -59,6 +104,7 @@ int StudentWorld::init()
                     
                     break;
                 }
+                
                     
             }
         }
@@ -106,9 +152,9 @@ int StudentWorld::move()
     
     // P1 Roll: 3 Stars: 2 $$: 15 | Time: 75 | Bank: 9 | P2 Roll: 0 Stars: 1 $$: 22 VOR
     
-    gst << "P1 Roll: " << m_peach->getDieRoll() << " Stars: " << m_peach->getStars() << " $$: " << m_peach->getCoins();
+    gst << "P1 Roll: " << m_peach->getSquaresToMove() << " Stars: " << m_peach->getStars() << " $$: " << m_peach->getCoins();
     // VOR
-    gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getDieRoll() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
+    gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
     // VOR
     
     setGameStatText(gst.str());

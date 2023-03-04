@@ -7,6 +7,10 @@
 #include "GameConstants.h"
 #include <iostream> // TODO: REMOVE
 
+
+// #####################################
+// ACTOR
+
 Actor::Actor(const int imageID, const int startX, const int startY, const int direction, const int depth) : GraphObject(imageID, startX, startY, direction, depth) {
     m_active = true;
     m_studentWorld = nullptr;
@@ -30,11 +34,16 @@ StudentWorld* Actor::getStudentWorld() const {
     return m_studentWorld;
 }
 
+// #####################################
+// AVATAR : ACTOR
 
 Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(imageID, startX, startY, right, 0) {
     
     m_walk_direction = right; // TODO: WHAT TO INITIALIZE TO
     m_ticks_to_move = 0;
+    m_squares_to_move = 0; // TODO: WHAT TO CONSTRUCT WITH
+    m_moving = false;
+    
 }
 
 int Avatar::getTicksToMove() const {
@@ -69,11 +78,38 @@ int Avatar::getWalkDirection() const {
     return m_walk_direction;
 }
 
+
+int Avatar::getSquaresToMove() const {
+    return m_squares_to_move;
+}
+
+
+void Avatar::rollMove(int maxRoll) {
+    m_squares_to_move = randInt(1, maxRoll);
+    setTicksToMove(m_squares_to_move * 8);
+    m_moving = true;
+}
+void Avatar::move() {
+    int nX = getX(), nY = getY();
+    getPositionInThisDirection(getWalkDirection(), 2, nX, nY);
+    
+    moveTo(nX, nY);
+    setTicksToMove(getTicksToMove() - 1);
+}
+
+bool Avatar::getMoving() const {
+    return m_moving;
+}
+
+
+
+// #####################################
+// PLAYERAVATAR : AVATAR
+
 PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum) : Avatar(imageID, startX, startY) {
     
     m_playerNum = playerNum;
     m_waiting_to_roll = true;
-    m_die_roll = randInt(1, 10); // TODO: WHAT TO CONSTRUCT WITH
     m_coins = 0;
     m_stars = 0;
 }
@@ -91,27 +127,21 @@ void PlayerAvatar::changeCoins(int delta) { // TODO: should these auto cap
 void PlayerAvatar::changeStars(int delta) {
     m_coins -= delta;
 }
-int PlayerAvatar::getDieRoll() const {
-    return m_die_roll;
-}
-
 
 void PlayerAvatar::doSomething() {
             
-    if (m_waiting_to_roll) {
+    if (!getMoving()) {
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
             case ACTION_ROLL:
-                m_die_roll = randInt(1, 10);
-                setTicksToMove(m_die_roll * 8);
-                m_waiting_to_roll = false; // WALKING STATE
+                rollMove(10);
                 break;
             default:
                 return;
         }
     }
     
-    if (!m_waiting_to_roll) {
+    if (getMoving()) {
         
         // if avatar on directional square
         
@@ -131,12 +161,8 @@ void PlayerAvatar::doSomething() {
             else setDirection(right);
         }
         
+        move();
         
-        int nX = getX(), nY = getY();
-        getPositionInThisDirection(getWalkDirection(), 2, nX, nY);
-        
-        moveTo(nX, nY);
-        setTicksToMove(getTicksToMove() - 1);
         if (getTicksToMove() == 0) m_waiting_to_roll = true;
         
     }
@@ -144,6 +170,13 @@ void PlayerAvatar::doSomething() {
 }
 
 
+
+// #####################################
+// SQUARE : Monster
+
+
+// #####################################
+// SQUARE : ACTOR
 
 Square::Square(const int imageID, const int startX, const int startY, const int direction) : Actor(imageID, startX, startY, direction, 1) {
     
@@ -153,12 +186,75 @@ void Square::doSomething() {
     //
 }
 
-CoinSquare::CoinSquare(const int startX, const int startY, bool adds) : Square(IID_BLUE_COIN_SQUARE, startX, startY, right) {
+// #####################################
+// COINSQUARE : ACTOR
+
+CoinSquare::CoinSquare(const int startX, const int startY, bool adds) : Square(adds ? IID_BLUE_COIN_SQUARE : IID_RED_COIN_SQUARE, startX, startY, right) {
     if (adds) m_delta_coins = 3;
     else m_delta_coins = -3;
 }
 
 void CoinSquare::doSomething() {
+    if (!isActive()) return;
+    
+    
+}
+
+// #####################################
+// STARSQUARE : ACTOR
+
+StarSquare::StarSquare(const int startX, const int startY) : Square(IID_STAR_SQUARE, startX, startY, right) {
+}
+
+void StarSquare::doSomething() {
+    if (!isActive()) return;
+    
+    
+}
+
+// #####################################
+// DIRECTIONALSQUARE : ACTOR
+
+DirectionalSquare::DirectionalSquare(const int startX, const int startY, int direction) : Square(IID_DIR_SQUARE, startX, startY, direction) {
+}
+
+void DirectionalSquare::doSomething() {
+    if (!isActive()) return;
+    
+    
+}
+
+// #####################################
+// BANKSQUARE : ACTOR
+
+BankSquare::BankSquare(const int startX, const int startY) : Square(IID_BANK_SQUARE, startX, startY, right) {
+}
+
+void BankSquare::doSomething() {
+    if (!isActive()) return;
+    
+    
+}
+
+// #####################################
+// COINSQUARE : ACTOR
+
+EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_SQUARE, startX, startY, right) {
+}
+
+void EventSquare::doSomething() {
+    if (!isActive()) return;
+    
+    
+}
+
+// #####################################
+// COINSQUARE : ACTOR
+
+DroppingSquare::DroppingSquare(const int startX, const int startY) : Square(IID_DROPPING_SQUARE, startX, startY, right) {
+}
+
+void DroppingSquare::doSomething() {
     if (!isActive()) return;
     
     
