@@ -27,7 +27,9 @@ int StudentWorld::init()
     m_bank_coins = 0;
     
     string boardPath = assetPath() + "board0" + to_string(getBoardNumber()) + ".txt";
-    m_board.loadBoard(boardPath);
+    Board::LoadResult loadResult = m_board.loadBoard(boardPath);
+    
+    if (loadResult != Board::load_success) return GWSTATUS_BOARD_ERROR;
     
     for (int x = 0; x < BOARD_WIDTH; x++) {
         for (int y = 0; y < BOARD_HEIGHT; y++) {
@@ -35,11 +37,13 @@ int StudentWorld::init()
             Board::GridEntry ge = m_board.getContentsOf(x, y);
             
             switch (ge) {
+                    
                 case Board::empty: {
                     break;
                 }
                     
                 // SQUARES
+                    
                 case Board::blue_coin_square: {
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
                     addGridObject(gop);
@@ -94,11 +98,9 @@ int StudentWorld::init()
                     
                     m_peach = new PlayerAvatar(IID_PEACH, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 1);
                     addGridObject(m_peach);
-                    // TODO: I THINK PEACH IS NULL????? OR MAYBE NOT
                     
                     m_yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 2);
                     addGridObject(m_yoshi);
-                    // TODO: BRING HIM BACK
                     
                     break;
                 }
@@ -126,10 +128,7 @@ int StudentWorld::init()
         }
     }
     
-    
-    
-	startCountdownTimer(99);  // this placeholder causes timeout after 5 seconds
-    
+	startCountdownTimer(99);
     
     return GWSTATUS_CONTINUE_GAME;
 }
@@ -141,47 +140,37 @@ void StudentWorld::addGridObject(Actor* gridObjectPointer) {
 
 int StudentWorld::move()
 {
-    // Notice that the return value GWSTATUS_NOT_IMPLEMENTED will cause our framework to end the game.
-
     
-    // ask all objects to do something
-    
+    // Have all actors do something
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         if ((*it)->isActive()) {
             (*it)->doSomething();
         }
     }
     
-    // delete dead
-    
+    // Delete inactive actors
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         if (!(*it)->isActive()) {
             delete *it;
-            it = m_objects.erase(it); // TODO: OH LORDY LORD
+            it = m_objects.erase(it);
             it--;
         }
     }
     
-    // status text update
-    
-    ostringstream gst;
-    
-    // P1 Roll: 3 Stars: 2 $$: 15 | Time: 75 | Bank: 9 | P2 Roll: 0 Stars: 1 $$: 22 VOR
+    // Update status text
+    ostringstream gst; // Format: P1 Roll: 3 Stars: 2 $$: 15 | Time: 75 | Bank: 9 | P2 Roll: 0 Stars: 1 $$: 22 VOR
     
     gst << "P1 Roll: " << m_peach->getSquaresToMove() << " Stars: " << m_peach->getStars() << " $$: " << m_peach->getCoins();
-    
-    // VOR
+    // Vortex
     if (m_peach->hasVortex()) gst << " VOR";
     
     gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
-    
-    // VOR
+    // Vortex
     if (m_yoshi->hasVortex()) gst << " VOR";
     
     setGameStatText(gst.str());
     
-    
-    // game out of time?
+    // Check if game is over
     if (timeRemaining() <= 0) {
         playSound(SOUND_GAME_FINISHED);
         
@@ -218,7 +207,7 @@ void StudentWorld::cleanUp()
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         delete *it;
         it = m_objects.erase(it);
-        it--; // TODO: OH LORDY LORD
+        it--; // TODO: ASK? why
     }
 }
 

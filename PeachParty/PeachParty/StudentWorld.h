@@ -40,7 +40,7 @@ class StudentWorld : public GameWorld
 
     private:
         
-        std::vector<Actor*> m_objects;
+        std::vector<Actor*> m_objects; // TODO: ASK? Does this need initialization
         PlayerAvatar* m_peach;
         PlayerAvatar* m_yoshi;
         Board m_board;

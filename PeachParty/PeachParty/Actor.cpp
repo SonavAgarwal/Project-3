@@ -3,11 +3,7 @@
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
-
 #include "GameConstants.h"
-#include <iostream> // TODO: REMOVE
-//#include <cmath>
-
 
 // #####################################
 // ACTOR
@@ -15,22 +11,18 @@
 Actor::Actor(const int imageID, const int startX, const int startY, const int direction, const int depth) : GraphObject(imageID, startX, startY, direction, depth) {
     m_active = true;
     m_studentWorld = nullptr;
-    
 }
 
 bool Actor::isActive() const {
     return m_active;
 }
-
 void Actor::setIsActive(bool newActive) {
     m_active = newActive;
 }
 
-
 void Actor::setStudentWorld(StudentWorld* sw) {
     m_studentWorld = sw;
 }
-
 StudentWorld* Actor::getStudentWorld() const {
     return m_studentWorld;
 }
@@ -42,30 +34,20 @@ bool Actor::isOn(Actor *other) const {
 bool Actor::isImpactable() {
     return false;
 }
-
-void Actor::impact() {}
+void Actor::impact() {} // TODO: ASK? EMPTY
 
 // #####################################
 // AVATAR : ACTOR
 
 Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(imageID, startX, startY, right, 0) {
-    
-    m_walk_direction = right; // TODO: WHAT TO INITIALIZE TO
+    m_walk_direction = right;
     m_ticks_to_move = 0;
-//    m_squares_to_move = 0; // TODO: WHAT TO CONSTRUCT WITH
     m_moving = false;
-    m_just_landed = false; // infinity TODO: WHAT
-    
-}
-
-void Avatar::doSomething() {
-    m_just_landed = false;;
 }
 
 int Avatar::getTicksToMove() const {
     return m_ticks_to_move;
 }
-
 void Avatar::setTicksToMove(int ticksToMove) {
     m_ticks_to_move = ticksToMove;
 }
@@ -90,37 +72,28 @@ bool Avatar::canWalkInDirection(int walkDirection) const {
     
     if ((sX < 0) || (sY < 0)) return false;
     if ((sX >= VIEW_WIDTH) || (sY >= VIEW_HEIGHT)) return false;
-    
-    // TODO: IS THERE A BETTER CONSTANT FOR 16
-    
+        
     return getStudentWorld()->isWalkable(sX, sY);
     
 }
 
 void Avatar::setWalkDirection(int walkDirection) {
-    
     m_walk_direction = walkDirection;
 }
-
 int Avatar::getWalkDirection() const {
     return m_walk_direction;
 }
 
-
 int Avatar::getSquaresToMove() const {
-    
     double sTMD = getTicksToMove() / 8.0;
     
+    // return ceil of ticksToMove / 8
     if (sTMD > ((int) sTMD)) {
-        return ((int) (sTMD + 1))   ;
+        return ((int) (sTMD + 1));
     } else {
         return ((int) sTMD);
     }
-    
-//    return std::ceil(getTicksToMove() / 8.0);
 }
-
-
 void Avatar::rollMove(int maxRoll) {
     int squaresToMove = randInt(1, maxRoll);
     setTicksToMove(squaresToMove * 8);
@@ -132,12 +105,11 @@ void Avatar::move() {
     getPositionInThisDirection(getWalkDirection(), 2, nX, nY);
     
     moveTo(nX, nY);
-//    setTicksToMove(getTicksToMove() - 1);
     m_ticks_to_move -= 1;
     
     if (getTicksToMove() == 0) {
         m_moving = false;
-        m_just_landed = true;
+//        m_just_landed = true;
     }
 }
 
@@ -158,13 +130,11 @@ void Avatar::handleTurningPoint() {
 bool Avatar::getMoving() const {
     return m_moving;
 }
-
 void Avatar::setMoving(bool newMoving) {
     m_moving = newMoving;
 }
 
 void Avatar::pointInRandomValidDirection() {
-    
     int testDirection = randInt(0, 3) * 90;
     while (!canWalkInDirection(testDirection)) {
         testDirection += 90;
@@ -184,31 +154,10 @@ void Avatar::updateSpriteDirection() {
 bool Avatar::isAtFork() {
     int otherDirectionCount = 0;
     for (int testDir = 0; testDir < 360; testDir += 90) {
-//        if (getWalkDirection() == testDir) continue; // TODO: WTF HELP ME
-        
         if (canWalkInDirection(testDir)) otherDirectionCount++;
     }
-    
-    
     return otherDirectionCount > 2;
 }
-
-bool Avatar::getJustLanded() const {
-    return m_just_landed;
-}
-
-void Avatar::setJustLanded(bool newJustLanded) {
-    m_just_landed = newJustLanded;
-}
-
-bool Avatar::justLandedOn(Actor *other) const {
-    return ((!m_moving) && m_just_landed && isOn(other)); // TODO: m_moving should always be false, NOT SURE IF STILL WORKS IF PLAYER MOVES INSTANTANEOUSLY
-}
-
-bool Avatar::isMovingOver(Actor *other) const {
-    return (m_moving && isOn(other));
-}
-
 
 bool Avatar::canMove() const {
     return true;
@@ -237,9 +186,9 @@ PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY
     m_has_vortex = false;
     
     m_forced_direction = -1;
+    m_just_landed = false;
+
 }
-
-
 
 int PlayerAvatar::getCoins() const {
     return m_coins;
@@ -247,7 +196,7 @@ int PlayerAvatar::getCoins() const {
 int PlayerAvatar::getStars() const {
     return m_stars;
 }
-int PlayerAvatar::changeCoins(int delta) { // TODO: should these auto cap
+int PlayerAvatar::changeCoins(int delta) {
     if (m_coins + delta < 0) { // coins can't go negative
         
         int finalDelta = 0 - m_coins;
@@ -260,17 +209,16 @@ int PlayerAvatar::changeCoins(int delta) { // TODO: should these auto cap
         return delta;
     }
 }
-
 void PlayerAvatar::changeStars(int delta) {
     m_stars += delta;
     if (m_stars < 0) m_stars = 0;
 }
 
 void PlayerAvatar::doSomething() {
-    Avatar::doSomething();
+    m_just_landed = false;
     
-        if (!getMoving()) { // waiting to roll
-        
+    if (!getMoving()) { // waiting to roll
+    
         if (getWalkDirection() == -1) {
             pointInRandomValidDirection();
         }
@@ -278,7 +226,7 @@ void PlayerAvatar::doSomething() {
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
             case ACTION_ROLL:
-                rollMove(3); // TODO restore to 10
+                rollMove(10);
                 break;
             case ACTION_FIRE: {
                 if (m_has_vortex) {
@@ -290,7 +238,7 @@ void PlayerAvatar::doSomething() {
                     
                     getStudentWorld()->playSound(SOUND_PLAYER_FIRE);
                     
-                    m_has_vortex = false; // TODO: REVERT
+                    m_has_vortex = false;
                     
                 }
                 
@@ -300,33 +248,22 @@ void PlayerAvatar::doSomething() {
                 return;
         }
     }
-    
-    if (getMoving()) {
+    if (getMoving()) { // walking
         
-        // if avatar on directional square // TODO: do in directional square
-        
-        if (m_forced_direction != -1) {
-            
+        if (m_forced_direction != -1) { // On a directional square
             setWalkDirection(m_forced_direction);
             updateSpriteDirection();
             m_forced_direction = -1;
-        } else if (isDirectlyOnTopOfSquare() && isAtFork()) {
+        } else if (isDirectlyOnTopOfSquare() && isAtFork()) { // At a fork
             
             int action = getStudentWorld()->getAction(m_playerNum);
-            
-            if (action == ACTION_NONE) return;
-            
-            
+            if (action == ACTION_NONE) return; // User didn't select a direction
             
             if ((action == ACTION_UP && canWalkInDirection(up) && getWalkDirection() != down) ||
                 (action == ACTION_LEFT && canWalkInDirection(left) && getWalkDirection() != right) ||
                 (action == ACTION_RIGHT && canWalkInDirection(right) && getWalkDirection() != left) ||
                 (action == ACTION_DOWN && canWalkInDirection(down) && getWalkDirection() != up)) {
-                
-                
-                // valid direction
-                
-                // get new direction
+                // User selected a valid direction
                 
                 int newDir = right;
                 switch (action) {
@@ -344,23 +281,17 @@ void PlayerAvatar::doSomething() {
                         break;
                 }
                 
-                
                 setWalkDirection(newDir);
                 updateSpriteDirection();
                 
-                
-            } else return;
-            
+            } else return; // User selected an invalid direction
         } else {
             handleTurningPoint();
         }
         
         move();
-        
-//        if (getTicksToMove() == 0) m_waiting_to_roll = true; // TODO: IN BOO AND BOWSER NEED EXTRA STUFF AFTER
-        
+        if (getTicksToMove() == 0) m_just_landed = true;
     }
-    
 }
 
 void PlayerAvatar::swapCoins(PlayerAvatar* other) {
@@ -377,7 +308,7 @@ void PlayerAvatar::swapStars(PlayerAvatar* other) {
 
 void PlayerAvatar::swapMovement(PlayerAvatar* other) { // TODO: think if swap just landed
     
-    // swap x // TODO: CHECK THAT THIS WORKS
+    // swap x and y
     int tempX = other->getX();
     int tempY = other->getY();
     other->moveTo(getX(), getY());
@@ -403,15 +334,14 @@ void PlayerAvatar::swapMovement(PlayerAvatar* other) { // TODO: think if swap ju
     other->setDirection(getDirection());
     setDirection(tempSpriteDirection);
     
-    setJustLanded(false); // WHICH ONE IS THE CURRENT ONE NOW HMMMM actually nvm
-    other->setJustLanded(false); // TODO: CHECK WITH SOMEONE
+    setJustLanded(false); // TODO: ASK?
+    other->setJustLanded(false);
 
 }
 
 bool PlayerAvatar::hasVortex() const {
     return m_has_vortex;
 }
-
 void PlayerAvatar::setHasVortex(bool newHasVortex) {
     m_has_vortex = newHasVortex;
 }
@@ -420,7 +350,15 @@ void PlayerAvatar::setForcedDirection(int newDirection) {
     m_forced_direction = newDirection;
 }
 
-
+void PlayerAvatar::setJustLanded(bool newJustLanded) {
+    m_just_landed = newJustLanded;
+}
+bool PlayerAvatar::justLandedOn(Actor *other) const {
+    return ((!getMoving()) && m_just_landed && isOn(other));
+}
+bool PlayerAvatar::isMovingOver(Actor *other) const {
+    return (getMoving() && isOn(other));
+}
 
 // #####################################
 // BADDIE : AVATAR
@@ -438,13 +376,11 @@ void Baddie::doSomething() {
             PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
             
             if (player != nullptr) {
-                if (player->isOn(this) && (!player->getMoving())) { // TODO: activate only once
-                    
-                    if (getJustActivatedPlayer(pN)) continue;
-                    
+                if (player->isOn(this) && (!player->getMoving())) {
+                    if (getJustActivatedPlayer(pN)) continue; // already activated
                     handlePlayer(player);
                     setJustActivatedPlayer(pN, true);
-                } else {
+                } else { // no longer colliding
                     setJustActivatedPlayer(pN, false);
                 }
             }
@@ -476,7 +412,6 @@ void Baddie::doSomething() {
     
 }
 
-
 int Baddie::getPauseCounter() const {
     return m_pause_counter;
 }
@@ -487,7 +422,6 @@ void Baddie::setPauseCounter(int newPauseCount) {
 bool Baddie::getJustActivatedPlayer(int playerNum) const {
     return m_just_activated[playerNum - 1];
 }
-
 void Baddie::setJustActivatedPlayer(int playerNum, bool newJustActivated) {
     m_just_activated[playerNum - 1] = newJustActivated;
 }
@@ -495,7 +429,6 @@ void Baddie::setJustActivatedPlayer(int playerNum, bool newJustActivated) {
 bool Baddie::isImpactable() {
     return true;
 }
-
 void Baddie::impact() {
     teleportToRandomSquare();
     setWalkDirection(right);
@@ -504,29 +437,24 @@ void Baddie::impact() {
     setPauseCounter(180);
 }
 
-
 // #####################################
 // BOWSER : BADDIE
 
-Bowser::Bowser(const int startX, const int startY) : Baddie(IID_BOWSER, startX, startY) {
-    
-}
+Bowser::Bowser(const int startX, const int startY) : Baddie(IID_BOWSER, startX, startY) {}
 
-void Bowser::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of ever activating or 50% every tick
+void Bowser::handlePlayer(PlayerAvatar *player) { // TODO: ASK is it 50% chance of ever activating or 50% every tick
     if (randInt(1, 2) == 1) {
         player->changeCoins(-1 * player->getCoins());
         getStudentWorld()->playSound(SOUND_BOWSER_ACTIVATE);
     }
 }
-
 void Bowser::handleLand() {
-    if (randInt(1, 4) == 1) { // what kinds of squares can he destroy // TODO: RESTORE to 1/4
+    if (randInt(1, 4) == 1) {
         getStudentWorld()->removeSquareAt(getX(), getY());
         getStudentWorld()->addGridObject(new DroppingSquare(getX(), getY()));
         getStudentWorld()->playSound(SOUND_DROPPING_SQUARE_CREATED);
     }
 }
-
 
 // #####################################
 // BOO : BADDIE
@@ -543,24 +471,18 @@ void Boo::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of ever
     }
     getStudentWorld()->playSound(SOUND_BOO_ACTIVATE);
 }
-
-void Boo::handleLand() {
-    
-}
+void Boo::handleLand() {}
 
 // #####################################
 // SQUARE : ACTOR
 
-Square::Square(const int imageID, const int startX, const int startY, const int direction) : Actor(imageID, startX, startY, direction, 1) {
-    
-}
+Square::Square(const int imageID, const int startX, const int startY, const int direction) : Actor(imageID, startX, startY, direction, 1) {}
 
 void Square::doSomething() {
-    if (!isActive()) return; // TODO: DONT NEED?
+    if (!isActive()) return;
     
     for (int pN = 1; pN <= 2; pN++) {
         PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
-        
         if (player != nullptr) handlePlayer(player);
     }
 }
@@ -577,22 +499,6 @@ CoinSquare::CoinSquare(const int startX, const int startY, bool adds) : Square(a
     else m_delta_coins = -3;
 }
 
-//void CoinSquare::doSomething() { // TODO: SEE IF CAN REFACTOR WITH PARENT DOSOMETHING ALWAYS DOING STUFF FOR BOTH OR SOMETHING
-//    if (!isActive()) return; // TODO: DONT NEED?
-//
-//    for (int pN = 1; pN <= 2; pN++) {
-//        PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
-//
-//        if (player->justLandedOn(this)) {
-//            player->changeCoins(m_delta_coins); // change coins already caps it
-//            if (m_delta_coins >= 0) getStudentWorld()->playSound(SOUND_GIVE_COIN);
-//            else getStudentWorld()->playSound(SOUND_TAKE_COIN);
-//        }
-//
-//    }
-//
-//}
-
 void CoinSquare::handlePlayer(PlayerAvatar *player) {
     if (player->justLandedOn(this)) {
         player->changeCoins(m_delta_coins); // change coins already caps it
@@ -604,14 +510,11 @@ void CoinSquare::handlePlayer(PlayerAvatar *player) {
 // #####################################
 // STARSQUARE : SQUARE
 
-StarSquare::StarSquare(const int startX, const int startY) : Square(IID_STAR_SQUARE, startX, startY, right) {
-    
-    
-}
+StarSquare::StarSquare(const int startX, const int startY) : Square(IID_STAR_SQUARE, startX, startY, right) {}
 
 void StarSquare::handlePlayer(PlayerAvatar *player) {
-    //  player just landed on this or  player is moving over this
-    if (player->justLandedOn(this) || player->isMovingOver(this)) { // TODO: check 2nd condition
+    //  player just landed on this or player is moving over this
+    if (player->justLandedOn(this) || player->isMovingOver(this)) {
         
         if (player->getCoins() < 20) return;
         else {
@@ -627,13 +530,11 @@ void StarSquare::handlePlayer(PlayerAvatar *player) {
 // #####################################
 // DIRECTIONALSQUARE : SQUARE
 
-DirectionalSquare::DirectionalSquare(const int startX, const int startY, int direction) : Square(IID_DIR_SQUARE, startX, startY, direction) {
-}
+DirectionalSquare::DirectionalSquare(const int startX, const int startY, int direction) : Square(IID_DIR_SQUARE, startX, startY, direction) {}
 
 void DirectionalSquare::handlePlayer(PlayerAvatar *player) {
-    
     if (player->justLandedOn(this) || player->isMovingOver(this)) {
-        player->setForcedDirection(getDirection()); // TODO: double check is right direction
+        player->setForcedDirection(getDirection());
     }
 
 }
@@ -641,8 +542,7 @@ void DirectionalSquare::handlePlayer(PlayerAvatar *player) {
 // #####################################
 // BANKSQUARE : SQUARE
 
-BankSquare::BankSquare(const int startX, const int startY) : Square(IID_BANK_SQUARE, startX, startY, right) {
-}
+BankSquare::BankSquare(const int startX, const int startY) : Square(IID_BANK_SQUARE, startX, startY, right) {}
 
 void BankSquare::handlePlayer(PlayerAvatar *player) {
 
@@ -651,7 +551,7 @@ void BankSquare::handlePlayer(PlayerAvatar *player) {
         player->changeCoins(bankCoins);
         getStudentWorld()->playSound(SOUND_WITHDRAW_BANK);
     } else if (player->isMovingOver(this)) {
-        int delta = player->changeCoins(-5); // TODO verify this is correct negative and stuff
+        int delta = player->changeCoins(-5);
         getStudentWorld()->changeBankCoins(-1 * delta);
         getStudentWorld()->playSound(SOUND_DEPOSIT_BANK);
     }
@@ -661,14 +561,12 @@ void BankSquare::handlePlayer(PlayerAvatar *player) {
 // #####################################
 // EVENTSQUARE : SQUARE
 
-EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_SQUARE, startX, startY, right) {
-}
+EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_SQUARE, startX, startY, right) {}
 
 void EventSquare::handlePlayer(PlayerAvatar *player) {
 
     if (player->justLandedOn(this)) {
         int option = randInt(1, 3);
-//        int option = 3; // TODO: REVERT
         switch (option) {
             case 1:
                 player->teleportToRandomSquare();
@@ -679,7 +577,7 @@ void EventSquare::handlePlayer(PlayerAvatar *player) {
                 getStudentWorld()->playSound(SOUND_PLAYER_TELEPORT);
                 break;
             case 3:
-                player->setHasVortex(true); // TODO: if player alr has vortex is it still an option
+                player->setHasVortex(true);
                 getStudentWorld()->playSound(SOUND_GIVE_VORTEX);
                 break;
         }
@@ -690,11 +588,10 @@ void EventSquare::handlePlayer(PlayerAvatar *player) {
 // #####################################
 // DROPPINGSQUARE : SQUARE
 
-DroppingSquare::DroppingSquare(const int startX, const int startY) : Square(IID_DROPPING_SQUARE, startX, startY, right) {
-}
+DroppingSquare::DroppingSquare(const int startX, const int startY) : Square(IID_DROPPING_SQUARE, startX, startY, right) {}
 
 void DroppingSquare::handlePlayer(PlayerAvatar *player) {
-        
+    
     if (player->justLandedOn(this)) {
         int option = randInt(1, 2);
         switch (option) {
@@ -706,20 +603,15 @@ void DroppingSquare::handlePlayer(PlayerAvatar *player) {
                 break;
         }
         getStudentWorld()->playSound(SOUND_DROPPING_SQUARE_ACTIVATE);
-
     }
+    
 }
-
-
 
 // #####################################
 // VORTEX : ACTOR
 
-
 Vortex::Vortex(const int startX, const int startY, const int fireDirection) : Actor(IID_VORTEX, startX, startY, right, 0) {
-    
     m_fire_direction = fireDirection;
-    
 }
 
 void Vortex::doSomething() {
@@ -731,7 +623,7 @@ void Vortex::doSomething() {
     
     if (getX() < 0 || getX() >= VIEW_WIDTH || getY() < 0 || getY() >= VIEW_HEIGHT) {
         setIsActive(false);
-//        return; // TODO: RETURN?
+        return; // TODO: ASK RETURN?
     }
     
     Actor* overlappingActor = getStudentWorld()->getOneOverlappingImpactable(this);
@@ -741,7 +633,6 @@ void Vortex::doSomething() {
         setIsActive(false);
         getStudentWorld()->playSound(SOUND_HIT_BY_VORTEX);
     }
-
 }
 
 bool Vortex::canMove() const {
