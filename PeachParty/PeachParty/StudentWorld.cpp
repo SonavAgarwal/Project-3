@@ -98,8 +98,8 @@ int StudentWorld::init()
                     addGridObject(m_peach);
                     // TODO: I THINK PEACH IS NULL????? OR MAYBE NOT
                     
-//                    m_yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 2);
-//                    addGridObject(m_yoshi);
+                    m_yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 2);
+                    addGridObject(m_yoshi);
                     // TODO: BRING HIM BACK
                     
                     break;
@@ -167,10 +167,10 @@ int StudentWorld::move()
     // VOR
     if (m_peach->hasVortex()) gst << " VOR";
     
-//    gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
-//    
-//    // VOR
-//    if (m_yoshi->hasVortex()) gst << " VOR";
+    gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
+    
+    // VOR
+    if (m_yoshi->hasVortex()) gst << " VOR";
     
     setGameStatText(gst.str());
     
@@ -258,7 +258,7 @@ PlayerAvatar* StudentWorld::getOtherPlayer(PlayerAvatar* thisPlayer) const {
     else return m_peach;
 }
 
-Actor* StudentWorld::getRandomSquare() const {
+Actor* StudentWorld::getRandomSquare() const { // TODO: GET BETTER ALGORITHM BECAUSE THIS ONE IS BIASED????
     int i = randInt(0, ((int) m_objects.size()) - 1);
     for (int k = 0; k < m_objects.size(); k++) {
         

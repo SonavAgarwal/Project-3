@@ -6,6 +6,7 @@
 
 #include "GameConstants.h"
 #include <iostream> // TODO: REMOVE
+//#include <cmath>
 
 
 // #####################################
@@ -45,7 +46,7 @@ Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(im
     
     m_walk_direction = right; // TODO: WHAT TO INITIALIZE TO
     m_ticks_to_move = 0;
-    m_squares_to_move = 0; // TODO: WHAT TO CONSTRUCT WITH
+//    m_squares_to_move = 0; // TODO: WHAT TO CONSTRUCT WITH
     m_moving = false;
     m_just_landed = false; // infinity TODO: WHAT
     
@@ -101,13 +102,22 @@ int Avatar::getWalkDirection() const {
 
 
 int Avatar::getSquaresToMove() const {
-    return m_squares_to_move;
+    
+    double sTMD = getTicksToMove() / 8.0;
+    
+    if (sTMD > ((int) sTMD)) {
+        return ((int) (sTMD + 1))   ;
+    } else {
+        return ((int) sTMD);
+    }
+    
+//    return std::ceil(getTicksToMove() / 8.0);
 }
 
 
 void Avatar::rollMove(int maxRoll) {
-    m_squares_to_move = randInt(1, maxRoll);
-    setTicksToMove(m_squares_to_move * 8);
+    int squaresToMove = randInt(1, maxRoll);
+    setTicksToMove(squaresToMove * 8);
     m_moving = true;
 }
 
@@ -125,6 +135,7 @@ void Avatar::move() {
 }
 
 void Avatar::handleTurningPoint() {
+    std::cerr << "turning point" << std::endl;
     if (!canWalkInDirection(getWalkDirection())) {
         if (getWalkDirection() == right || getWalkDirection() == left) {
             if (canWalkInDirection(up)) setWalkDirection(up);
@@ -134,8 +145,9 @@ void Avatar::handleTurningPoint() {
             else setWalkDirection(left); // TODO: VERIFY THIS ASSUMPTION IS OK
         }
         
+        std::cerr << "new direction: " << getWalkDirection() << std::endl;
         updateSpriteDirection();
-    }
+    } else std::cerr << "can continue" << std::endl;
 }
 
 bool Avatar::getMoving() const {
@@ -165,19 +177,19 @@ void Avatar::updateSpriteDirection() {
 }
 
 bool Avatar::isAtFork() {
-        std::cerr << "isAtFork" << std::endl;
+//        std::cerr << "isAtFork" << std::endl;
     int otherDirectionCount = 0;
-    std::cerr << getX() << std::endl;
-    std::cerr << getY() << std::endl;
+//    std::cerr << getX() << std::endl;
+//    std::cerr << getY() << std::endl;
     for (int testDir = 0; testDir < 360; testDir += 90) {
 //        if (getWalkDirection() == testDir) continue; // TODO: WTF HELP ME
         
-            std::cerr << testDir << std::endl;
+//            std::cerr << testDir << std::endl;
         if (canWalkInDirection(testDir)) otherDirectionCount++;
     }
     
     
-        std::cerr << otherDirectionCount << std::endl;
+//        std::cerr << otherDirectionCount << std::endl;
     return otherDirectionCount > 2;
 }
 
@@ -204,6 +216,7 @@ bool Avatar::canMove() const {
 
 void Avatar::teleportToRandomSquare() {
     Actor* newSquare = getStudentWorld()->getRandomSquare();
+    if (newSquare == nullptr) return;
     moveTo(newSquare->getX(), newSquare->getY());
     setWalkDirection(-1);
 }
@@ -218,6 +231,8 @@ PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY
     m_coins = 0;
     m_stars = 0;
     m_has_vortex = false;
+    
+    m_forced_direction = -1;
 }
 
 
@@ -251,48 +266,83 @@ void PlayerAvatar::doSomething() {
     Avatar::doSomething();
     
     
-        std::cerr << "======" << std::endl;
+//        std::cerr << "======" << std::endl;
             
     if (!getMoving()) { // waiting to roll
-        std::cerr << "A" << std::endl;
+//        std::cerr << "A" << std::endl;
         
-        if (!canWalkInDirection(getWalkDirection())) {
-            std::cerr << "B" << std::endl;
+        if (getWalkDirection() == -1) {
+//            std::cerr << "B" << std::endl;
             pointInRandomValidDirection();
         }
         
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
             case ACTION_ROLL:
-                std::cerr << "C" << std::endl;
-                rollMove(10);
+//                std::cerr << "C" << std::endl;
+                rollMove(3); // TODO restore to 10
                 break;
             case ACTION_FIRE:
                 // TODO: CODE FIRING
                 break;
             default:
-                std::cerr << "D" << std::endl;
+//                std::cerr << "D" << std::endl;
                 return;
         }
     }
     
     if (getMoving()) {
-        std::cerr << "E" << std::endl;
+//        std::cerr << "E" << std::endl;
         
         // if avatar on directional square // TODO: do in directional square
         
-        // else if at fork
-        
-        // else
-        if (isAtFork()) {
-            std::cerr << "F" << std::endl;
+        if (m_forced_direction != -1) {
+            
+                std::cerr << "being forced" << std::endl;
+            setWalkDirection(m_forced_direction);
+            updateSpriteDirection();
+            m_forced_direction = -1;
+        } else if (isAtFork()) {
+            
+//            std::cerr << "turning point" << std::endl;
+//            std::cerr << "F" << std::endl;
+            
+            std::cerr << "a" << std::endl;
             int action = getStudentWorld()->getAction(m_playerNum);
+            
             if (action == ACTION_NONE) return;
+            
+            std::cerr << "b" << std::endl;
+            
+            
+            
+            std::cerr << "current dir: " << getWalkDirection() << std::endl;
+            std::cerr << "new dir: ";
+            
+            
+            switch (action) {
+                case ACTION_UP:
+                    std::cerr << "up";
+                    break;
+                case ACTION_DOWN:
+                    std::cerr << "down";
+                    break;
+                case ACTION_LEFT:
+                    std::cerr << "left";
+                    break;
+                case ACTION_RIGHT:
+                    std::cerr << "right";
+                    break;
+            } std::cerr << std::endl;
+            
+            
             if ((action == ACTION_UP && canWalkInDirection(up) && getWalkDirection() != down) ||
                 (action == ACTION_LEFT && canWalkInDirection(left) && getWalkDirection() != right) ||
                 (action == ACTION_RIGHT && canWalkInDirection(right) && getWalkDirection() != left) ||
                 (action == ACTION_DOWN && canWalkInDirection(down) && getWalkDirection() != up)) {
                 
+                
+                std::cerr << "c" << std::endl;
                 // valid direction
                 
                 // get new direction
@@ -313,6 +363,8 @@ void PlayerAvatar::doSomething() {
                         break;
                 }
                 
+                std::cerr << "new dir: " << newDir << std::endl;
+                
                 setWalkDirection(newDir);
                 updateSpriteDirection();
                 
@@ -320,11 +372,11 @@ void PlayerAvatar::doSomething() {
             } else return;
             
         } else {
-            std::cerr << "G" << std::endl;
+            std::cerr << "MEOWOWOWOWOWWOW" << std::endl;
             handleTurningPoint();
         }
         
-            std::cerr << "H" << std::endl;
+//            std::cerr << "H" << std::endl;
         move();
         
 //        if (getTicksToMove() == 0) m_waiting_to_roll = true; // TODO: IN BOO AND BOWSER NEED EXTRA STUFF AFTER
@@ -384,6 +436,10 @@ bool PlayerAvatar::hasVortex() const {
 
 void PlayerAvatar::setHasVortex(bool newHasVortex) {
     m_has_vortex = newHasVortex;
+}
+
+void PlayerAvatar::setForcedDirection(int newDirection) {
+    m_forced_direction = newDirection;
 }
 
 
@@ -477,7 +533,7 @@ DirectionalSquare::DirectionalSquare(const int startX, const int startY, int dir
 void DirectionalSquare::handlePlayer(PlayerAvatar *player) {
     
     if (player->justLandedOn(this) || player->isMovingOver(this)) {
-        player->setWalkDirection(getDirection()); // TODO: double check is right direction
+        player->setForcedDirection(getDirection()); // TODO: double check is right direction
     }
 
 }
@@ -511,12 +567,15 @@ EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_
 void EventSquare::handlePlayer(PlayerAvatar *player) {
 
     if (player->justLandedOn(this)) {
-//        int option = randInt(1, 3);
-        int option = 1;
+        int option = randInt(1, 3);
+//        int option = 1;
         switch (option) {
             case 1:
-                std::cerr << "TP" << std::endl;
+//                std::cerr << "TP" << std::endl;
+//                std::cerr << player->getX() << ", " << player->getY() << std::endl;
+                
                 player->teleportToRandomSquare();
+//                std::cerr << player->getX() << ", " << player->getY() << std::endl;
                 getStudentWorld()->playSound(SOUND_PLAYER_TELEPORT);
                 break;
             case 2:

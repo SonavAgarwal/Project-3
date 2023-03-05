@@ -59,7 +59,7 @@ public:
 private:
     int m_ticks_to_move;
     int m_walk_direction;
-    int m_squares_to_move;
+//    int m_squares_to_move;
     bool m_moving;
     bool m_just_landed;
 };
@@ -73,7 +73,7 @@ public:
     int getStars() const;
     int changeCoins(int delta);
     void changeStars(int delta);
-    int getDieRoll() const;
+//    int getDieRoll() const;
     
     void swapCoins(PlayerAvatar* other);
     void swapStars(PlayerAvatar* other);
@@ -83,12 +83,16 @@ public:
     bool hasVortex() const;
     void setHasVortex(bool newHasVortex);
     
+    void setForcedDirection(int newDirection);
+    
 private:
     int m_playerNum;
 //    bool m_waiting_to_roll;
     int m_coins;
     int m_stars;
     bool m_has_vortex;
+    
+    int m_forced_direction;
 };
 
 
