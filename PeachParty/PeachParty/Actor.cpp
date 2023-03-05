@@ -7,6 +7,7 @@
 
 // #####################################
 // ACTOR
+// #####################################
 
 Actor::Actor(const int imageID, const int startX, const int startY, const int direction, const int depth) : GraphObject(imageID, startX, startY, direction, depth) {
     m_active = true;
@@ -38,6 +39,7 @@ void Actor::impact() {} // TODO: ASK? EMPTY
 
 // #####################################
 // AVATAR : ACTOR
+// #####################################
 
 Avatar::Avatar(const int imageID, const int startX, const int startY) : Actor(imageID, startX, startY, right, 0) {
     m_walk_direction = right;
@@ -174,9 +176,9 @@ bool Avatar::isDirectlyOnTopOfSquare() const {
     return ((getX() % SPRITE_WIDTH == 0) && (getY() % SPRITE_HEIGHT == 0));
 }
 
-
 // #####################################
 // PLAYERAVATAR : AVATAR
+// #####################################
 
 PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY, int playerNum) : Avatar(imageID, startX, startY) {
     
@@ -362,6 +364,7 @@ bool PlayerAvatar::isMovingOver(Actor *other) const {
 
 // #####################################
 // BADDIE : AVATAR
+// #####################################
 
 Baddie::Baddie(const int imageID, const int startX, const int startY) : Avatar(imageID, startX, startY) {
     m_pause_counter = 180;
@@ -475,6 +478,7 @@ void Boo::handleLand() {}
 
 // #####################################
 // SQUARE : ACTOR
+// #####################################
 
 Square::Square(const int imageID, const int startX, const int startY, const int direction) : Actor(imageID, startX, startY, direction, 1) {}
 
@@ -638,5 +642,3 @@ void Vortex::doSomething() {
 bool Vortex::canMove() const {
     return true;
 }
-
-

@@ -172,5 +172,4 @@ class Vortex : public Actor {
         int m_fire_direction;
 };
 
-
 #endif // ACTOR_H_

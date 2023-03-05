@@ -16,8 +16,7 @@ GameWorld* createStudentWorld(string assetPath)
 
 StudentWorld::StudentWorld(string assetPath)
 : GameWorld(assetPath)
-{
-}
+{}
 
 int StudentWorld::init()
 {
@@ -207,17 +206,16 @@ void StudentWorld::cleanUp()
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         delete *it;
         it = m_objects.erase(it);
-        it--; // TODO: ASK? why
+        it--;
     }
 }
-
 
 Board& StudentWorld::getBoard() {
     return m_board;
 }
 
 bool StudentWorld::isWalkable(int screenX, int screenY) {
-    Board::GridEntry ge = m_board.getContentsOf(screenX / SPRITE_WIDTH, screenY / SPRITE_HEIGHT); // should round down properly?? I hope
+    Board::GridEntry ge = m_board.getContentsOf(screenX / SPRITE_WIDTH, screenY / SPRITE_HEIGHT);
     
     if (ge == Board::empty) return false;
     else return true;
@@ -228,12 +226,10 @@ int StudentWorld::emptyBank() {
     m_bank_coins = 0;
     return tempBankCoins;
 }
-
 int StudentWorld::getBankCoins() const {
     return m_bank_coins;
 }
-
-void StudentWorld::changeBankCoins(int delta) { // TODO: do we need a safeguard
+void StudentWorld::changeBankCoins(int delta) {
     m_bank_coins += delta;
 }
 
@@ -247,17 +243,16 @@ PlayerAvatar* StudentWorld::getPlayerWithNumber(int playerNum) const {
             return nullptr;
     }
 }
-
 PlayerAvatar* StudentWorld::getOtherPlayer(PlayerAvatar* thisPlayer) const {
     if (thisPlayer == m_peach) return m_yoshi;
     else return m_peach;
 }
 
-Actor* StudentWorld::getRandomSquare() const { // TODO: GET BETTER ALGORITHM BECAUSE THIS ONE IS BIASED????
+Actor* StudentWorld::getRandomSquare() const { // TODO: ASK GET BETTER ALGORITHM BECAUSE THIS ONE IS BIASED????
     int i = randInt(0, ((int) m_objects.size()) - 1);
     for (int k = 0; k < m_objects.size(); k++) {
         
-        if ((!m_objects[i]->canMove()) && m_objects[i]->isActive()) { // cannot move means square and is active
+        if ((!m_objects[i]->canMove()) && m_objects[i]->isActive()) { // squares cannot move
             return m_objects[i];
         }
         
@@ -268,9 +263,7 @@ Actor* StudentWorld::getRandomSquare() const { // TODO: GET BETTER ALGORITHM BEC
     return nullptr;
 }
 
-// flags square for removal
-void StudentWorld::removeSquareAt(int rX, int rY) {
-    
+void StudentWorld::removeSquareAt(int rX, int rY) {// flags square for removal
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         Actor* actor = *it;
         if ((!actor->canMove()) && (actor->getX() == rX) && (actor->getY() == rY)) {
@@ -283,7 +276,7 @@ Actor* StudentWorld::getOneOverlappingImpactable(Actor* actor1) {
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         Actor* actor2 = *it;
         if (actor2->isImpactable()) {
-            if (!((
+            if (!(( // NOT no overlap
                 actor1->getX() + SPRITE_WIDTH <= actor2->getX()
             ) || (
                 actor1->getY() + SPRITE_HEIGHT <= actor2->getY()
@@ -294,7 +287,6 @@ Actor* StudentWorld::getOneOverlappingImpactable(Actor* actor1) {
                   ))) {
                       return actor2;
                   }
-            
         }
     }
     return nullptr;
