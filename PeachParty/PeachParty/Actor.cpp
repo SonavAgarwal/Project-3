@@ -142,7 +142,6 @@ void Avatar::move() {
 }
 
 void Avatar::handleTurningPoint() {
-//    std::cerr << "turning point" << std::endl;
     if (!canWalkInDirection(getWalkDirection())) {
         if (getWalkDirection() == right || getWalkDirection() == left) {
             if (canWalkInDirection(up)) setWalkDirection(up);
@@ -152,10 +151,8 @@ void Avatar::handleTurningPoint() {
             else setWalkDirection(left); // TODO: VERIFY THIS ASSUMPTION IS OK
         }
         
-//        std::cerr << "new direction: " << getWalkDirection() << std::endl;
         updateSpriteDirection();
     }
-//    else std::cerr << "can continue" << std::endl;
 }
 
 bool Avatar::getMoving() const {
@@ -185,19 +182,14 @@ void Avatar::updateSpriteDirection() {
 }
 
 bool Avatar::isAtFork() {
-//        std::cerr << "isAtFork" << std::endl;
     int otherDirectionCount = 0;
-//    std::cerr << getX() << std::endl;
-//    std::cerr << getY() << std::endl;
     for (int testDir = 0; testDir < 360; testDir += 90) {
 //        if (getWalkDirection() == testDir) continue; // TODO: WTF HELP ME
         
-//            std::cerr << testDir << std::endl;
         if (canWalkInDirection(testDir)) otherDirectionCount++;
     }
     
     
-//        std::cerr << otherDirectionCount << std::endl;
     return otherDirectionCount > 2;
 }
 
@@ -277,21 +269,15 @@ void PlayerAvatar::changeStars(int delta) {
 void PlayerAvatar::doSomething() {
     Avatar::doSomething();
     
-    
-//        std::cerr << "======" << std::endl;
-            
-    if (!getMoving()) { // waiting to roll
-//        std::cerr << "A" << std::endl;
+        if (!getMoving()) { // waiting to roll
         
         if (getWalkDirection() == -1) {
-//            std::cerr << "B" << std::endl;
             pointInRandomValidDirection();
         }
         
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
             case ACTION_ROLL:
-//                std::cerr << "C" << std::endl;
                 rollMove(3); // TODO restore to 10
                 break;
             case ACTION_FIRE: {
@@ -304,61 +290,32 @@ void PlayerAvatar::doSomething() {
                     
                     getStudentWorld()->playSound(SOUND_PLAYER_FIRE);
                     
-//                    m_has_vortex = false; // TODO: REVERT
+                    m_has_vortex = false; // TODO: REVERT
                     
                 }
                 
                 break;
             }
             default:
-//                std::cerr << "D" << std::endl;
                 return;
         }
     }
     
     if (getMoving()) {
-//        std::cerr << "E" << std::endl;
         
         // if avatar on directional square // TODO: do in directional square
         
         if (m_forced_direction != -1) {
             
-//                std::cerr << "being forced" << std::endl;
             setWalkDirection(m_forced_direction);
             updateSpriteDirection();
             m_forced_direction = -1;
         } else if (isDirectlyOnTopOfSquare() && isAtFork()) {
             
-//            std::cerr << "turning point" << std::endl;
-//            std::cerr << "F" << std::endl;
-            
-//            std::cerr << "a" << std::endl;
             int action = getStudentWorld()->getAction(m_playerNum);
             
             if (action == ACTION_NONE) return;
             
-//            std::cerr << "b" << std::endl;
-            
-            
-            
-//            std::cerr << "current dir: " << getWalkDirection() << std::endl;
-//            std::cerr << "new dir: ";
-            
-            
-//            switch (action) {
-//                case ACTION_UP:
-//                    std::cerr << "up";
-//                    break;
-//                case ACTION_DOWN:
-//                    std::cerr << "down";
-//                    break;
-//                case ACTION_LEFT:
-//                    std::cerr << "left";
-//                    break;
-//                case ACTION_RIGHT:
-//                    std::cerr << "right";
-//                    break;
-//            } std::cerr << std::endl;
             
             
             if ((action == ACTION_UP && canWalkInDirection(up) && getWalkDirection() != down) ||
@@ -367,7 +324,6 @@ void PlayerAvatar::doSomething() {
                 (action == ACTION_DOWN && canWalkInDirection(down) && getWalkDirection() != up)) {
                 
                 
-//                std::cerr << "c" << std::endl;
                 // valid direction
                 
                 // get new direction
@@ -388,7 +344,6 @@ void PlayerAvatar::doSomething() {
                         break;
                 }
                 
-//                std::cerr << "new dir: " << newDir << std::endl;
                 
                 setWalkDirection(newDir);
                 updateSpriteDirection();
@@ -397,11 +352,9 @@ void PlayerAvatar::doSomething() {
             } else return;
             
         } else {
-//            std::cerr << "MEOWOWOWOWOWWOW" << std::endl;
             handleTurningPoint();
         }
         
-//            std::cerr << "H" << std::endl;
         move();
         
 //        if (getTicksToMove() == 0) m_waiting_to_roll = true; // TODO: IN BOO AND BOWSER NEED EXTRA STUFF AFTER
@@ -480,7 +433,6 @@ Baddie::Baddie(const int imageID, const int startX, const int startY) : Avatar(i
 
 void Baddie::doSomething() {
     
-    std::cerr << m_pause_counter << std::endl;
     if (!getMoving()) {
         for (int pN = 1; pN <= 2; pN++) {
             PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
@@ -515,9 +467,7 @@ void Baddie::doSomething() {
         
         move();
         
-        std::cerr << "PLEASE BRO" << std::endl;
         if (getTicksToMove() == 0) {
-            std::cerr << "sdf" << std::endl;
             setPauseCounter(180);
             
             handleLand();
@@ -570,7 +520,6 @@ void Bowser::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of e
 }
 
 void Bowser::handleLand() {
-    std::cerr << "HANDLE LAND" << std::endl;
     if (randInt(1, 4) == 1) { // what kinds of squares can he destroy // TODO: RESTORE to 1/4
         getStudentWorld()->removeSquareAt(getX(), getY());
         getStudentWorld()->addGridObject(new DroppingSquare(getX(), getY()));
@@ -718,15 +667,11 @@ EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_
 void EventSquare::handlePlayer(PlayerAvatar *player) {
 
     if (player->justLandedOn(this)) {
-//        int option = randInt(1, 3);
-        int option = 3; // TODO: REVERT
+        int option = randInt(1, 3);
+//        int option = 3; // TODO: REVERT
         switch (option) {
             case 1:
-//                std::cerr << "TP" << std::endl;
-//                std::cerr << player->getX() << ", " << player->getY() << std::endl;
-                
                 player->teleportToRandomSquare();
-//                std::cerr << player->getX() << ", " << player->getY() << std::endl;
                 getStudentWorld()->playSound(SOUND_PLAYER_TELEPORT);
                 break;
             case 2:

@@ -27,12 +27,10 @@ int StudentWorld::init()
     m_bank_coins = 0;
     
     string boardPath = assetPath() + "board0" + to_string(getBoardNumber()) + ".txt";
-//    cerr << boardPath << endl;
     m_board.loadBoard(boardPath);
     
     for (int x = 0; x < BOARD_WIDTH; x++) {
         for (int y = 0; y < BOARD_HEIGHT; y++) {
-//            cerr << m_board.getContentsOf(x, y) << endl;
             
             Board::GridEntry ge = m_board.getContentsOf(x, y);
             
@@ -158,8 +156,6 @@ int StudentWorld::move()
     
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         if (!(*it)->isActive()) {
-            std::cerr << "deleting something" << std::endl;
-            std::cerr << (*it)->getX() << ", " << (*it)->getY() << std::endl;
             delete *it;
             it = m_objects.erase(it); // TODO: OH LORDY LORD
             it--;

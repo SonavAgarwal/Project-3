@@ -14,10 +14,10 @@
             filePath = "PeachParty/Actor.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "423"
-            endingLineNumber = "423"
-            landmarkName = "unknown"
-            landmarkType = "0">
+            startingLineNumber = "376"
+            endingLineNumber = "376"
+            landmarkName = "PlayerAvatar::swapStars(other)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -30,9 +30,9 @@
             filePath = "PeachParty/Actor.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "424"
-            endingLineNumber = "424"
-            landmarkName = "PlayerAvatar::swapMovement(other)"
+            startingLineNumber = "377"
+            endingLineNumber = "377"
+            landmarkName = "PlayerAvatar::swapStars(other)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
