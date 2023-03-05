@@ -18,6 +18,8 @@ class Actor: public GraphObject {
         StudentWorld* getStudentWorld() const;
         bool isOn(Actor* other) const;
         virtual bool canMove() const = 0;
+        virtual bool isImpactable();
+        virtual void impact();
     private:
         bool m_active;
         StudentWorld* m_studentWorld; // TODO: IS THIS OK
@@ -109,6 +111,9 @@ public:
     bool getJustActivatedPlayer(int playerNum) const;
     void setJustActivatedPlayer(int playerNum, bool newJustActivated);
     
+    virtual bool isImpactable();
+    virtual void impact();
+    
 private:
     int m_pause_counter;
     bool m_just_activated[2];
@@ -190,6 +195,16 @@ class DroppingSquare: public Square {
         DroppingSquare(const int startX, const int startY);
         virtual void handlePlayer(PlayerAvatar* player);
 //        virtual void doSomething();
+};
+
+
+class Vortex : public Actor {
+public:
+    Vortex(const int startX, const int startY, const int direction);
+    virtual void doSomething();
+    virtual bool canMove() const;
+private:
+    int m_fire_direction;
 };
 
 

@@ -34,7 +34,7 @@ class StudentWorld : public GameWorld
         void removeSquareAt(int rX, int rY);
         void addGridObject(Actor* gridObjectPointer);
 
-    
+        Actor* getOneOverlappingImpactable(Actor* actor1); // TODO: WHY COMPLAINING ABOUT CONST
     
         ~StudentWorld(); // TODO: IS THIS NECESSARY
 

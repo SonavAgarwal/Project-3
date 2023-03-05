@@ -39,6 +39,12 @@ bool Actor::isOn(Actor *other) const {
     return (getX() == other->getX()) && (getY() == other->getY());
 }
 
+bool Actor::isImpactable() {
+    return false;
+}
+
+void Actor::impact() {}
+
 // #####################################
 // AVATAR : ACTOR
 
@@ -288,9 +294,19 @@ void PlayerAvatar::doSomething() {
 //                std::cerr << "C" << std::endl;
                 rollMove(3); // TODO restore to 10
                 break;
-            case ACTION_FIRE:
-                // TODO: CODE FIRING
+            case ACTION_FIRE: {
+                
+                int spawnX = getX(), spawnY = getY();
+                getPositionInThisDirection(getWalkDirection(), 16, spawnX, spawnY);
+                Vortex* vortex = new Vortex(spawnX, spawnY, getWalkDirection());
+                getStudentWorld()->addGridObject(vortex);
+                
+                getStudentWorld()->playSound(SOUND_PLAYER_FIRE);
+                
+                m_has_vortex = false;
+                
                 break;
+            }
             default:
 //                std::cerr << "D" << std::endl;
                 return;
@@ -473,6 +489,8 @@ void Baddie::doSomething() {
                     
                     handlePlayer(player);
                     setJustActivatedPlayer(pN, true);
+                } else {
+                    setJustActivatedPlayer(pN, false);
                 }
             }
         }
@@ -521,6 +539,19 @@ void Baddie::setJustActivatedPlayer(int playerNum, bool newJustActivated) {
     m_just_activated[playerNum - 1] = newJustActivated;
 }
 
+bool Baddie::isImpactable() {
+    return true;
+}
+
+void Baddie::impact() {
+    teleportToRandomSquare();
+    setWalkDirection(right);
+    setDirection(0);
+    setMoving(false);
+    setPauseCounter(180);
+}
+
+
 // #####################################
 // BOWSER : BADDIE
 
@@ -553,7 +584,7 @@ Boo::Boo(const int startX, const int startY) : Baddie(IID_BOO, startX, startY) {
 }
 
 void Boo::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of ever activating or 50% every tick
-    if (randInt(1, 2) == 1) {
+    if (randInt(1, 1) == 1) {
         player->swapCoins(getStudentWorld()->getOtherPlayer(player));
     } else {
         player->swapStars(getStudentWorld()->getOtherPlayer(player));
@@ -587,7 +618,7 @@ bool Square::canMove() const {
 }
 
 // #####################################
-// COINSQUARE : ACTOR
+// COINSQUARE : SQUARE
 
 CoinSquare::CoinSquare(const int startX, const int startY, bool adds) : Square(adds ? IID_BLUE_COIN_SQUARE : IID_RED_COIN_SQUARE, startX, startY, right) {
     if (adds) m_delta_coins = 3;
@@ -619,7 +650,7 @@ void CoinSquare::handlePlayer(PlayerAvatar *player) {
 }
 
 // #####################################
-// STARSQUARE : ACTOR
+// STARSQUARE : SQUARE
 
 StarSquare::StarSquare(const int startX, const int startY) : Square(IID_STAR_SQUARE, startX, startY, right) {
     
@@ -642,7 +673,7 @@ void StarSquare::handlePlayer(PlayerAvatar *player) {
 }
 
 // #####################################
-// DIRECTIONALSQUARE : ACTOR
+// DIRECTIONALSQUARE : SQUARE
 
 DirectionalSquare::DirectionalSquare(const int startX, const int startY, int direction) : Square(IID_DIR_SQUARE, startX, startY, direction) {
 }
@@ -656,7 +687,7 @@ void DirectionalSquare::handlePlayer(PlayerAvatar *player) {
 }
 
 // #####################################
-// BANKSQUARE : ACTOR
+// BANKSQUARE : SQUARE
 
 BankSquare::BankSquare(const int startX, const int startY) : Square(IID_BANK_SQUARE, startX, startY, right) {
 }
@@ -676,7 +707,7 @@ void BankSquare::handlePlayer(PlayerAvatar *player) {
 }
 
 // #####################################
-// COINSQUARE : ACTOR
+// EVENTSQUARE : SQUARE
 
 EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_SQUARE, startX, startY, right) {
 }
@@ -709,7 +740,7 @@ void EventSquare::handlePlayer(PlayerAvatar *player) {
 }
 
 // #####################################
-// COINSQUARE : ACTOR
+// DROPPINGSQUARE : SQUARE
 
 DroppingSquare::DroppingSquare(const int startX, const int startY) : Square(IID_DROPPING_SQUARE, startX, startY, right) {
 }
@@ -730,3 +761,43 @@ void DroppingSquare::handlePlayer(PlayerAvatar *player) {
 
     }
 }
+
+
+
+// #####################################
+// VORTEX : ACTOR
+
+
+Vortex::Vortex(const int startX, const int startY, const int fireDirection) : Actor(IID_VORTEX, startX, startY, right, 0) {
+    
+    m_fire_direction = fireDirection;
+    
+}
+
+void Vortex::doSomething() {
+    if (!isActive()) return;
+    
+    int nX = getX(), nY = getY();
+    getPositionInThisDirection(m_fire_direction, 2, nX, nY);
+    moveTo(nX, nY);
+    
+    if (getX() < 0 || getX() >= VIEW_WIDTH || getY() < 0 || getY() >= VIEW_HEIGHT) {
+        setIsActive(false);
+//        return; // TODO: RETURN?
+    }
+    
+    Actor* overlappingActor = getStudentWorld()->getOneOverlappingImpactable(this);
+    
+    if (overlappingActor != nullptr) {
+        overlappingActor->impact();
+        setIsActive(false);
+        getStudentWorld()->playSound(SOUND_HIT_BY_VORTEX);
+    }
+
+}
+
+bool Vortex::canMove() const {
+    return true;
+}
+
+

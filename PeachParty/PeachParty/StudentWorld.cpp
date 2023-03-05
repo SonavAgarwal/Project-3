@@ -117,8 +117,8 @@ int StudentWorld::init()
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
                     addGridObject(gop);
                     
-//                    gop = new Boo(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
-//                    addGridObject(gop);
+                    gop = new Boo(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    addGridObject(gop);
                     
                     break;
                 }
@@ -286,16 +286,33 @@ Actor* StudentWorld::getRandomSquare() const { // TODO: GET BETTER ALGORITHM BEC
 // flags square for removal
 void StudentWorld::removeSquareAt(int rX, int rY) {
     
-        std::cerr << "(" << rX <<  ", " << rY << ")" << std::endl;
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
-//        std::cerr << "c" << std::endl;
         Actor* actor = *it;
-        std::cerr << !actor->canMove() << " " << actor->getX() <<  ", " << actor->getY() << std::endl;
         if ((!actor->canMove()) && (actor->getX() == rX) && (actor->getY() == rY)) {
-            std::cerr << "dog" << std::endl;
             actor->setIsActive(false);
         }
     }
+}
+
+Actor* StudentWorld::getOneOverlappingImpactable(Actor* actor1) {
+    for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
+        Actor* actor2 = *it;
+        if (actor2->isImpactable()) {
+            if (!((
+                actor1->getX() + SPRITE_WIDTH <= actor2->getX()
+            ) || (
+                actor1->getY() + SPRITE_HEIGHT <= actor2->getY()
+            ) || (
+                actor1->getX() >= actor2->getX() + SPRITE_WIDTH
+            ) || (
+                actor1->getY() >= actor2->getY() + SPRITE_HEIGHT
+                  ))) {
+                      return actor2;
+                  }
+            
+        }
+    }
+    return nullptr;
 }
 
 StudentWorld::~StudentWorld() {
