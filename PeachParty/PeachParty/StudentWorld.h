@@ -21,10 +21,12 @@ class StudentWorld : public GameWorld
     
         Board& getBoard();
         bool isWalkable(int screenX, int screenY); // CANT BE CONST BC OF STUPID BOARD CLASS
+        int emptyBank() const;
         int getBankCoins() const;
         void changeBankCoins(int delta);
     
         PlayerAvatar* getPlayerWithNumber(int playerNum) const;
+        PlayerAvatar* getOtherPlayer(PlayerAvatar* thisPlayer) const;
     
     
         ~StudentWorld(); // TODO: IS THIS NECESSARY

@@ -153,9 +153,14 @@ int StudentWorld::move()
     // P1 Roll: 3 Stars: 2 $$: 15 | Time: 75 | Bank: 9 | P2 Roll: 0 Stars: 1 $$: 22 VOR
     
     gst << "P1 Roll: " << m_peach->getSquaresToMove() << " Stars: " << m_peach->getStars() << " $$: " << m_peach->getCoins();
+    
     // VOR
+    if (m_peach->hasVortex()) gst << " VOR";
+    
     gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
+    
     // VOR
+    if (m_yoshi->hasVortex()) gst << " VOR";
     
     setGameStatText(gst.str());
     
@@ -213,9 +218,16 @@ bool StudentWorld::isWalkable(int screenX, int screenY) {
     else return true;
 }
 
+int StudentWorld::emptyBank() const {
+    int tempBankCoins = m_bank_coins;
+    m_bank_coins = 0;
+    return tempBankCoins;
+}
+
 int StudentWorld::getBankCoins() const {
     return m_bank_coins;
 }
+
 void StudentWorld::changeBankCoins(int delta) { // TODO: do we need a safeguard
     m_bank_coins += delta;
 }
@@ -230,6 +242,12 @@ PlayerAvatar* StudentWorld::getPlayerWithNumber(int playerNum) const {
             return nullptr;
     }
 }
+
+PlayerAvatar* StudentWorld::getOtherPlayer(PlayerAvatar* thisPlayer) const {
+    if (thisPlayer == m_peach) return m_yoshi;
+    else return m_peach;
+}
+
 
 StudentWorld::~StudentWorld() {
     cleanUp();

@@ -44,10 +44,12 @@ public:
     void setMoving(bool newMoving);
     
     bool getJustLanded() const; // TODO: UNUSED
+    void setJustLanded(bool newJustLanded);
     bool justLandedOn(Actor* other) const;
     bool isMovingOver(Actor* other) const;
     
     // TODO: for teleporting what happens to landing
+    void teleportToRandomSquare();
     
 //    bool keyDirectionOpposesCurrentDirection();
         
@@ -66,7 +68,7 @@ public:
     
     int getCoins() const;
     int getStars() const;
-    void changeCoins(int delta);
+    int changeCoins(int delta);
     void changeStars(int delta);
     int getDieRoll() const;
     
@@ -75,11 +77,15 @@ public:
     // TODO: get a vortex
     void swapMovement(PlayerAvatar* other);
     
+    bool hasVortex() const;
+    void setHasVortex(bool newHasVortex);
+    
 private:
     int m_playerNum;
 //    bool m_waiting_to_roll;
     int m_coins;
     int m_stars;
+    bool m_has_vortex;
 };
 
 
@@ -88,7 +94,7 @@ class Square: public Actor {
     public:
         Square(const int imageID, const int startX, const int startY, const int direction);
         virtual void doSomething(); // = 0; // TODO: SHOULD THIS BE PURE VIRTUAL
-        virtual void handlePlayerLand(PlayerAvatar* player) = 0;
+        virtual void handlePlayer(PlayerAvatar* player) = 0;
     private:
         
 };
@@ -97,7 +103,7 @@ class CoinSquare: public Square {
     public:
         CoinSquare(const int startX, const int startY, bool adds);
 //        virtual void doSomething();
-        virtual void handlePlayerLand(PlayerAvatar* player);
+        virtual void handlePlayer(PlayerAvatar* player);
     private:
         int m_delta_coins;
 };
@@ -107,7 +113,7 @@ class StarSquare: public Square {
     public:
         StarSquare(const int startX, const int startY);
 //        virtual void doSomething();
-        virtual void handlePlayerLand(PlayerAvatar* player);
+        virtual void handlePlayer(PlayerAvatar* player);
 };
 
 
@@ -115,7 +121,7 @@ class DirectionalSquare: public Square {
     public:
         DirectionalSquare(const int startX, const int startY, int direction);
 //        virtual void doSomething();
-        virtual void handlePlayerLand(PlayerAvatar* player);
+        virtual void handlePlayer(PlayerAvatar* player);
     private:
 //        int forcingDirection;
 };
@@ -124,7 +130,7 @@ class DirectionalSquare: public Square {
 class BankSquare: public Square {
     public:
         BankSquare(const int startX, const int startY);
-        virtual void handlePlayerLand(PlayerAvatar* player);
+        virtual void handlePlayer(PlayerAvatar* player);
 //        virtual void doSomething();
 };
 
@@ -132,7 +138,7 @@ class BankSquare: public Square {
 class EventSquare: public Square {
     public:
         EventSquare(const int startX, const int startY);
-        virtual void handlePlayerLand(PlayerAvatar* player);
+        virtual void handlePlayer(PlayerAvatar* player);
 //        virtual void doSomething();
 };
 
@@ -141,7 +147,7 @@ class EventSquare: public Square {
 class DroppingSquare: public Square {
     public:
         DroppingSquare(const int startX, const int startY);
-        virtual void handlePlayerLand(PlayerAvatar* player);
+        virtual void handlePlayer(PlayerAvatar* player);
 //        virtual void doSomething();
 };
 
