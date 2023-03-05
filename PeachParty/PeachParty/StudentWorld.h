@@ -7,10 +7,8 @@
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
-//#include "GraphObject.h"
 class Actor;
 class PlayerAvatar;
-class Square;
 
 class StudentWorld : public GameWorld
 {
@@ -21,7 +19,7 @@ class StudentWorld : public GameWorld
         virtual void cleanUp();
     
         Board& getBoard();
-        bool isWalkable(int screenX, int screenY); // CANT BE CONST BC OF STUPID BOARD CLASS
+        bool isWalkable(int screenX, int screenY);
         int emptyBank();
         int getBankCoins() const;
         void changeBankCoins(int delta);
@@ -34,9 +32,9 @@ class StudentWorld : public GameWorld
         void removeSquareAt(int rX, int rY);
         void addGridObject(Actor* gridObjectPointer);
 
-        Actor* getOneOverlappingImpactable(Actor* actor1); // TODO: WHY COMPLAINING ABOUT CONST
+        Actor* getOneOverlappingImpactable(Actor* actor1);
     
-        ~StudentWorld(); // TODO: IS THIS NECESSARY
+        ~StudentWorld();
 
     private:
         
@@ -46,9 +44,6 @@ class StudentWorld : public GameWorld
         Board m_board;
     
         int m_bank_coins;
-        
-
-    
 };
 
 #endif // STUDENTWORLD_H_
