@@ -33,6 +33,7 @@ public:
     bool canWalkInDirection(int walkDirection) const;
     int getWalkDirection() const;
     void setWalkDirection(int walkDirection);
+    bool isDirectlyOnTopOfSquare() const;
     
     int getSquaresToMove() const;
     void rollMove(int maxRoll);
@@ -45,7 +46,7 @@ public:
     void setMoving(bool newMoving);
     
     bool getJustLanded() const; // TODO: UNUSED
-    void setJustLanded(bool newJustLanded);
+    void setJustLanded(bool newJustLanded); // TODO: MOVE LANDED INTO PLAYERAVATAR BC BOWSER DOESN'T NEED
     bool justLandedOn(Actor* other) const;
     bool isMovingOver(Actor* other) const;
     
@@ -93,6 +94,38 @@ private:
     bool m_has_vortex;
     
     int m_forced_direction;
+};
+
+class Baddie: public Avatar {
+public:
+    Baddie(const int imageID, const int startX, const int startY);
+    virtual void doSomething();
+    virtual void handlePlayer(PlayerAvatar* player) = 0;
+    virtual void handleLand() = 0;
+    
+    int getPauseCounter() const;
+    void setPauseCounter(int newPauseCount);
+    
+    bool getJustActivatedPlayer(int playerNum) const;
+    void setJustActivatedPlayer(int playerNum, bool newJustActivated);
+    
+private:
+    int m_pause_counter;
+    bool m_just_activated[2];
+};
+
+class Bowser: public Baddie {
+public:
+    Bowser(const int startX, const int startY);
+    virtual void handlePlayer(PlayerAvatar* player);
+    virtual void handleLand();
+};
+
+class Boo: public Baddie {
+public:
+    Boo(const int startX, const int startY);
+    virtual void handlePlayer(PlayerAvatar* player);
+    virtual void handleLand();
 };
 
 

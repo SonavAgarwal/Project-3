@@ -126,7 +126,8 @@ void Avatar::move() {
     getPositionInThisDirection(getWalkDirection(), 2, nX, nY);
     
     moveTo(nX, nY);
-    setTicksToMove(getTicksToMove() - 1);
+//    setTicksToMove(getTicksToMove() - 1);
+    m_ticks_to_move -= 1;
     
     if (getTicksToMove() == 0) {
         m_moving = false;
@@ -135,7 +136,7 @@ void Avatar::move() {
 }
 
 void Avatar::handleTurningPoint() {
-    std::cerr << "turning point" << std::endl;
+//    std::cerr << "turning point" << std::endl;
     if (!canWalkInDirection(getWalkDirection())) {
         if (getWalkDirection() == right || getWalkDirection() == left) {
             if (canWalkInDirection(up)) setWalkDirection(up);
@@ -145,9 +146,10 @@ void Avatar::handleTurningPoint() {
             else setWalkDirection(left); // TODO: VERIFY THIS ASSUMPTION IS OK
         }
         
-        std::cerr << "new direction: " << getWalkDirection() << std::endl;
+//        std::cerr << "new direction: " << getWalkDirection() << std::endl;
         updateSpriteDirection();
-    } else std::cerr << "can continue" << std::endl;
+    }
+//    else std::cerr << "can continue" << std::endl;
 }
 
 bool Avatar::getMoving() const {
@@ -219,6 +221,10 @@ void Avatar::teleportToRandomSquare() {
     if (newSquare == nullptr) return;
     moveTo(newSquare->getX(), newSquare->getY());
     setWalkDirection(-1);
+}
+
+bool Avatar::isDirectlyOnTopOfSquare() const {
+    return ((getX() % SPRITE_WIDTH == 0) && (getY() % SPRITE_HEIGHT == 0));
 }
 
 
@@ -298,42 +304,42 @@ void PlayerAvatar::doSomething() {
         
         if (m_forced_direction != -1) {
             
-                std::cerr << "being forced" << std::endl;
+//                std::cerr << "being forced" << std::endl;
             setWalkDirection(m_forced_direction);
             updateSpriteDirection();
             m_forced_direction = -1;
-        } else if (isAtFork()) {
+        } else if (isDirectlyOnTopOfSquare() && isAtFork()) {
             
 //            std::cerr << "turning point" << std::endl;
 //            std::cerr << "F" << std::endl;
             
-            std::cerr << "a" << std::endl;
+//            std::cerr << "a" << std::endl;
             int action = getStudentWorld()->getAction(m_playerNum);
             
             if (action == ACTION_NONE) return;
             
-            std::cerr << "b" << std::endl;
+//            std::cerr << "b" << std::endl;
             
             
             
-            std::cerr << "current dir: " << getWalkDirection() << std::endl;
-            std::cerr << "new dir: ";
+//            std::cerr << "current dir: " << getWalkDirection() << std::endl;
+//            std::cerr << "new dir: ";
             
             
-            switch (action) {
-                case ACTION_UP:
-                    std::cerr << "up";
-                    break;
-                case ACTION_DOWN:
-                    std::cerr << "down";
-                    break;
-                case ACTION_LEFT:
-                    std::cerr << "left";
-                    break;
-                case ACTION_RIGHT:
-                    std::cerr << "right";
-                    break;
-            } std::cerr << std::endl;
+//            switch (action) {
+//                case ACTION_UP:
+//                    std::cerr << "up";
+//                    break;
+//                case ACTION_DOWN:
+//                    std::cerr << "down";
+//                    break;
+//                case ACTION_LEFT:
+//                    std::cerr << "left";
+//                    break;
+//                case ACTION_RIGHT:
+//                    std::cerr << "right";
+//                    break;
+//            } std::cerr << std::endl;
             
             
             if ((action == ACTION_UP && canWalkInDirection(up) && getWalkDirection() != down) ||
@@ -342,7 +348,7 @@ void PlayerAvatar::doSomething() {
                 (action == ACTION_DOWN && canWalkInDirection(down) && getWalkDirection() != up)) {
                 
                 
-                std::cerr << "c" << std::endl;
+//                std::cerr << "c" << std::endl;
                 // valid direction
                 
                 // get new direction
@@ -363,7 +369,7 @@ void PlayerAvatar::doSomething() {
                         break;
                 }
                 
-                std::cerr << "new dir: " << newDir << std::endl;
+//                std::cerr << "new dir: " << newDir << std::endl;
                 
                 setWalkDirection(newDir);
                 updateSpriteDirection();
@@ -372,7 +378,7 @@ void PlayerAvatar::doSomething() {
             } else return;
             
         } else {
-            std::cerr << "MEOWOWOWOWOWWOW" << std::endl;
+//            std::cerr << "MEOWOWOWOWOWWOW" << std::endl;
             handleTurningPoint();
         }
         
@@ -445,8 +451,119 @@ void PlayerAvatar::setForcedDirection(int newDirection) {
 
 
 // #####################################
-// SQUARE : Monster
+// BADDIE : AVATAR
 
+Baddie::Baddie(const int imageID, const int startX, const int startY) : Avatar(imageID, startX, startY) {
+    m_pause_counter = 180;
+    m_just_activated[0] = false;
+    m_just_activated[1] = false;
+}
+
+void Baddie::doSomething() {
+    
+    std::cerr << m_pause_counter << std::endl;
+    if (!getMoving()) {
+        for (int pN = 1; pN <= 2; pN++) {
+            PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
+            
+            if (player != nullptr) {
+                if (player->isOn(this) && (!player->getMoving())) { // TODO: activate only once
+                    
+                    if (getJustActivatedPlayer(pN)) continue;
+                    
+                    handlePlayer(player);
+                    setJustActivatedPlayer(pN, true);
+                }
+            }
+        }
+        
+        m_pause_counter--;
+        
+        if (m_pause_counter == 0) {
+            rollMove(10);
+            pointInRandomValidDirection();
+        }
+    }
+        
+    if (getMoving()) {
+        if (isDirectlyOnTopOfSquare() && isAtFork()) {
+            pointInRandomValidDirection();
+        } else if (isDirectlyOnTopOfSquare() && (!canWalkInDirection(getWalkDirection()))) {
+            handleTurningPoint();
+        }
+        
+        move();
+        
+        std::cerr << "PLEASE BRO" << std::endl;
+        if (getTicksToMove() == 0) {
+            std::cerr << "sdf" << std::endl;
+            setPauseCounter(180);
+            
+            handleLand();
+        }
+    }
+    
+}
+
+
+int Baddie::getPauseCounter() const {
+    return m_pause_counter;
+}
+void Baddie::setPauseCounter(int newPauseCount) {
+    m_pause_counter = newPauseCount;
+}
+
+bool Baddie::getJustActivatedPlayer(int playerNum) const {
+    return m_just_activated[playerNum - 1];
+}
+
+void Baddie::setJustActivatedPlayer(int playerNum, bool newJustActivated) {
+    m_just_activated[playerNum - 1] = newJustActivated;
+}
+
+// #####################################
+// BOWSER : BADDIE
+
+Bowser::Bowser(const int startX, const int startY) : Baddie(IID_BOWSER, startX, startY) {
+    
+}
+
+void Bowser::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of ever activating or 50% every tick
+    if (randInt(1, 2) == 1) {
+        player->changeCoins(-1 * player->getCoins());
+        getStudentWorld()->playSound(SOUND_BOWSER_ACTIVATE);
+    }
+}
+
+void Bowser::handleLand() {
+    std::cerr << "HANDLE LAND" << std::endl;
+    if (randInt(1, 4) == 1) { // what kinds of squares can he destroy // TODO: RESTORE to 1/4
+        getStudentWorld()->removeSquareAt(getX(), getY());
+        getStudentWorld()->addGridObject(new DroppingSquare(getX(), getY()));
+        getStudentWorld()->playSound(SOUND_DROPPING_SQUARE_CREATED);
+    }
+}
+
+
+// #####################################
+// BOO : BADDIE
+
+Boo::Boo(const int startX, const int startY) : Baddie(IID_BOO, startX, startY) {
+    
+}
+
+void Boo::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of ever activating or 50% every tick
+    if (randInt(1, 2) == 1) {
+        player->swapCoins(getStudentWorld()->getOtherPlayer(player));
+    } else {
+        player->swapStars(getStudentWorld()->getOtherPlayer(player));
+    }
+    getStudentWorld()->playSound(SOUND_BOO_ACTIVATE);
+}
+
+void Boo::handleLand() {
+    
+}
 
 // #####################################
 // SQUARE : ACTOR
@@ -466,7 +583,7 @@ void Square::doSomething() {
 }
 
 bool Square::canMove() const {
-    return true;
+    return false;
 }
 
 // #####################################

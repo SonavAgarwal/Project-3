@@ -107,11 +107,19 @@ int StudentWorld::init()
                 case Board::bowser: {
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
                     addGridObject(gop);
+                    
+                    gop = new Bowser(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+                    addGridObject(gop);
+                    
                     break;
                 }
                 case Board::boo: {
                     Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
                     addGridObject(gop);
+                    
+//                    gop = new Boo(x * SPRITE_WIDTH, y * SPRITE_HEIGHT);
+//                    addGridObject(gop);
+                    
                     break;
                 }
                 
@@ -150,6 +158,8 @@ int StudentWorld::move()
     
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         if (!(*it)->isActive()) {
+            std::cerr << "deleting something" << std::endl;
+            std::cerr << (*it)->getX() << ", " << (*it)->getY() << std::endl;
             delete *it;
             it = m_objects.erase(it); // TODO: OH LORDY LORD
             it--;
@@ -262,7 +272,7 @@ Actor* StudentWorld::getRandomSquare() const { // TODO: GET BETTER ALGORITHM BEC
     int i = randInt(0, ((int) m_objects.size()) - 1);
     for (int k = 0; k < m_objects.size(); k++) {
         
-        if (m_objects[i]->canMove() && m_objects[i]->isActive()) {
+        if ((!m_objects[i]->canMove()) && m_objects[i]->isActive()) { // cannot move means square and is active
             return m_objects[i];
         }
         
@@ -273,6 +283,20 @@ Actor* StudentWorld::getRandomSquare() const { // TODO: GET BETTER ALGORITHM BEC
     return nullptr;
 }
 
+// flags square for removal
+void StudentWorld::removeSquareAt(int rX, int rY) {
+    
+        std::cerr << "(" << rX <<  ", " << rY << ")" << std::endl;
+    for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
+//        std::cerr << "c" << std::endl;
+        Actor* actor = *it;
+        std::cerr << !actor->canMove() << " " << actor->getX() <<  ", " << actor->getY() << std::endl;
+        if ((!actor->canMove()) && (actor->getX() == rX) && (actor->getY() == rY)) {
+            std::cerr << "dog" << std::endl;
+            actor->setIsActive(false);
+        }
+    }
+}
 
 StudentWorld::~StudentWorld() {
     cleanUp();

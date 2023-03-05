@@ -31,6 +31,11 @@ class StudentWorld : public GameWorld
     
         Actor* getRandomSquare() const;
     
+        void removeSquareAt(int rX, int rY);
+        void addGridObject(Actor* gridObjectPointer);
+
+    
+    
         ~StudentWorld(); // TODO: IS THIS NECESSARY
 
     private:
@@ -42,7 +47,6 @@ class StudentWorld : public GameWorld
     
         int m_bank_coins;
         
-        void addGridObject(Actor* gridObjectPointer);
 
     
 };
