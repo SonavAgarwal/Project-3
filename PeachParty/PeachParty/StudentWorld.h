@@ -38,7 +38,7 @@ class StudentWorld : public GameWorld
 
     private:
         
-        std::vector<Actor*> m_objects; // TODO: ASK? Does this need initialization
+        std::vector<Actor*> m_objects;
         PlayerAvatar* m_peach;
         PlayerAvatar* m_yoshi;
         Board m_board;

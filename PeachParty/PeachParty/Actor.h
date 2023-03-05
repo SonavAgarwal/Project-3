@@ -41,7 +41,7 @@ class Avatar: public Actor {
         void move();
         bool getMoving() const;
         void pointInRandomValidDirection();
-        void updateSpriteDirection(); // TODO: MAKE SOME THINGS PRIVATE
+        void updateSpriteDirection();
         bool isAtFork();
         void setMoving(bool newMoving);
             
@@ -67,7 +67,6 @@ class PlayerAvatar: public Avatar {
         
         void swapCoins(PlayerAvatar* other);
         void swapStars(PlayerAvatar* other);
-        // TODO: get a vortex
         void swapMovement(PlayerAvatar* other);
         
         bool hasVortex() const;

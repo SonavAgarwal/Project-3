@@ -248,7 +248,7 @@ PlayerAvatar* StudentWorld::getOtherPlayer(PlayerAvatar* thisPlayer) const {
     else return m_peach;
 }
 
-Actor* StudentWorld::getRandomSquare() const { // TODO: ASK GET BETTER ALGORITHM BECAUSE THIS ONE IS BIASED????
+Actor* StudentWorld::getRandomSquare() const {
     int i = randInt(0, ((int) m_objects.size()) - 1);
     for (int k = 0; k < m_objects.size(); k++) {
         

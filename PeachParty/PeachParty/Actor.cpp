@@ -35,7 +35,7 @@ bool Actor::isOn(Actor *other) const {
 bool Actor::isImpactable() {
     return false;
 }
-void Actor::impact() {} // TODO: ASK? EMPTY
+void Actor::impact() {}
 
 // #####################################
 // AVATAR : ACTOR
@@ -119,10 +119,10 @@ void Avatar::handleTurningPoint() {
     if (!canWalkInDirection(getWalkDirection())) {
         if (getWalkDirection() == right || getWalkDirection() == left) {
             if (canWalkInDirection(up)) setWalkDirection(up);
-            else setWalkDirection(down); // TODO: VERIFY THIS ASSUMPTION IS OK
-        } else { // TODO: ALSO ASSUMPTION HERE only 4 direcs?
+            else setWalkDirection(down);
+        } else {
             if (canWalkInDirection(right)) setWalkDirection(right);
-            else setWalkDirection(left); // TODO: VERIFY THIS ASSUMPTION IS OK
+            else setWalkDirection(left);
         }
         
         updateSpriteDirection();
@@ -308,7 +308,7 @@ void PlayerAvatar::swapStars(PlayerAvatar* other) {
     m_stars = tempStars;
 }
 
-void PlayerAvatar::swapMovement(PlayerAvatar* other) { // TODO: think if swap just landed
+void PlayerAvatar::swapMovement(PlayerAvatar* other) {
     
     // swap x and y
     int tempX = other->getX();
@@ -336,9 +336,8 @@ void PlayerAvatar::swapMovement(PlayerAvatar* other) { // TODO: think if swap ju
     other->setDirection(getDirection());
     setDirection(tempSpriteDirection);
     
-    setJustLanded(false); // TODO: ASK?
+//    setJustLanded(false);
     other->setJustLanded(false);
-
 }
 
 bool PlayerAvatar::hasVortex() const {
@@ -445,7 +444,7 @@ void Baddie::impact() {
 
 Bowser::Bowser(const int startX, const int startY) : Baddie(IID_BOWSER, startX, startY) {}
 
-void Bowser::handlePlayer(PlayerAvatar *player) { // TODO: ASK is it 50% chance of ever activating or 50% every tick
+void Bowser::handlePlayer(PlayerAvatar *player) {
     if (randInt(1, 2) == 1) {
         player->changeCoins(-1 * player->getCoins());
         getStudentWorld()->playSound(SOUND_BOWSER_ACTIVATE);
@@ -466,8 +465,8 @@ Boo::Boo(const int startX, const int startY) : Baddie(IID_BOO, startX, startY) {
     
 }
 
-void Boo::handlePlayer(PlayerAvatar *player) { // TODO: is it 50% chance of ever activating or 50% every tick
-    if (randInt(1, 1) == 1) {
+void Boo::handlePlayer(PlayerAvatar *player) {
+    if (randInt(1, 2) == 1) {
         player->swapCoins(getStudentWorld()->getOtherPlayer(player));
     } else {
         player->swapStars(getStudentWorld()->getOtherPlayer(player));
@@ -627,7 +626,7 @@ void Vortex::doSomething() {
     
     if (getX() < 0 || getX() >= VIEW_WIDTH || getY() < 0 || getY() >= VIEW_HEIGHT) {
         setIsActive(false);
-        return; // TODO: ASK RETURN?
+        return;
     }
     
     Actor* overlappingActor = getStudentWorld()->getOneOverlappingImpactable(this);
