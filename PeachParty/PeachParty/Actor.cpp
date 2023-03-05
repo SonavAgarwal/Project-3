@@ -295,15 +295,18 @@ void PlayerAvatar::doSomething() {
                 rollMove(3); // TODO restore to 10
                 break;
             case ACTION_FIRE: {
+                if (m_has_vortex) {
                 
-                int spawnX = getX(), spawnY = getY();
-                getPositionInThisDirection(getWalkDirection(), 16, spawnX, spawnY);
-                Vortex* vortex = new Vortex(spawnX, spawnY, getWalkDirection());
-                getStudentWorld()->addGridObject(vortex);
-                
-                getStudentWorld()->playSound(SOUND_PLAYER_FIRE);
-                
-                m_has_vortex = false;
+                    int spawnX = getX(), spawnY = getY();
+                    getPositionInThisDirection(getWalkDirection(), 16, spawnX, spawnY);
+                    Vortex* vortex = new Vortex(spawnX, spawnY, getWalkDirection());
+                    getStudentWorld()->addGridObject(vortex);
+                    
+                    getStudentWorld()->playSound(SOUND_PLAYER_FIRE);
+                    
+//                    m_has_vortex = false; // TODO: REVERT
+                    
+                }
                 
                 break;
             }
@@ -715,8 +718,8 @@ EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_
 void EventSquare::handlePlayer(PlayerAvatar *player) {
 
     if (player->justLandedOn(this)) {
-        int option = randInt(1, 3);
-//        int option = 1;
+//        int option = randInt(1, 3);
+        int option = 3; // TODO: REVERT
         switch (option) {
             case 1:
 //                std::cerr << "TP" << std::endl;
