@@ -17,6 +17,7 @@ class Actor: public GraphObject {
         void setStudentWorld(StudentWorld* sw);
         StudentWorld* getStudentWorld() const;
         bool isOn(Actor* other) const;
+        virtual bool canMove() const = 0;
     private:
         bool m_active;
         StudentWorld* m_studentWorld; // TODO: IS THIS OK
@@ -50,6 +51,8 @@ public:
     
     // TODO: for teleporting what happens to landing
     void teleportToRandomSquare();
+    
+    virtual bool canMove() const;
     
 //    bool keyDirectionOpposesCurrentDirection();
         
@@ -95,6 +98,7 @@ class Square: public Actor {
         Square(const int imageID, const int startX, const int startY, const int direction);
         virtual void doSomething(); // = 0; // TODO: SHOULD THIS BE PURE VIRTUAL
         virtual void handlePlayer(PlayerAvatar* player) = 0;
+        virtual bool canMove() const;
     private:
         
 };

@@ -70,10 +70,19 @@ bool Avatar::canWalkInDirection(int walkDirection) const {
     int sX = getX();
     int sY = getY();
     
+    if (sX % SPRITE_WIDTH != 0) {
+        if (walkDirection == up || walkDirection == down) return false;
+    } else if (sY % SPRITE_HEIGHT != 0) {
+        if (walkDirection == left || walkDirection == right) return false;
+    }
+    
     int distance = 16;
     if (walkDirection == left || walkDirection == down) distance = 2;
     
     getPositionInThisDirection(walkDirection, distance, sX, sY);
+    
+    if ((sX < 0) || (sY < 0)) return false;
+    if ((sX >= VIEW_WIDTH) || (sY >= VIEW_HEIGHT)) return false;
     
     // TODO: IS THERE A BETTER CONSTANT FOR 16
     
@@ -156,14 +165,20 @@ void Avatar::updateSpriteDirection() {
 }
 
 bool Avatar::isAtFork() {
+        std::cerr << "isAtFork" << std::endl;
     int otherDirectionCount = 0;
+    std::cerr << getX() << std::endl;
+    std::cerr << getY() << std::endl;
     for (int testDir = 0; testDir < 360; testDir += 90) {
-        if (getWalkDirection() == testDir) continue;
+//        if (getWalkDirection() == testDir) continue; // TODO: WTF HELP ME
         
+            std::cerr << testDir << std::endl;
         if (canWalkInDirection(testDir)) otherDirectionCount++;
     }
     
-    return otherDirectionCount > 1;
+    
+        std::cerr << otherDirectionCount << std::endl;
+    return otherDirectionCount > 2;
 }
 
 bool Avatar::getJustLanded() const {
@@ -183,6 +198,16 @@ bool Avatar::isMovingOver(Actor *other) const {
 }
 
 
+bool Avatar::canMove() const {
+    return true;
+}
+
+void Avatar::teleportToRandomSquare() {
+    Actor* newSquare = getStudentWorld()->getRandomSquare();
+    moveTo(newSquare->getX(), newSquare->getY());
+    setWalkDirection(-1);
+}
+
 
 // #####################################
 // PLAYERAVATAR : AVATAR
@@ -194,6 +219,7 @@ PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY
     m_stars = 0;
     m_has_vortex = false;
 }
+
 
 
 int PlayerAvatar::getCoins() const {
@@ -223,27 +249,35 @@ void PlayerAvatar::changeStars(int delta) {
 
 void PlayerAvatar::doSomething() {
     Avatar::doSomething();
+    
+    
+        std::cerr << "======" << std::endl;
             
     if (!getMoving()) { // waiting to roll
+        std::cerr << "A" << std::endl;
         
         if (!canWalkInDirection(getWalkDirection())) {
+            std::cerr << "B" << std::endl;
             pointInRandomValidDirection();
         }
         
         int action = getStudentWorld()->getAction(m_playerNum);
         switch (action) {
             case ACTION_ROLL:
+                std::cerr << "C" << std::endl;
                 rollMove(10);
                 break;
             case ACTION_FIRE:
                 // TODO: CODE FIRING
                 break;
             default:
+                std::cerr << "D" << std::endl;
                 return;
         }
     }
     
     if (getMoving()) {
+        std::cerr << "E" << std::endl;
         
         // if avatar on directional square // TODO: do in directional square
         
@@ -251,6 +285,7 @@ void PlayerAvatar::doSomething() {
         
         // else
         if (isAtFork()) {
+            std::cerr << "F" << std::endl;
             int action = getStudentWorld()->getAction(m_playerNum);
             if (action == ACTION_NONE) return;
             if ((action == ACTION_UP && canWalkInDirection(up) && getWalkDirection() != down) ||
@@ -285,9 +320,11 @@ void PlayerAvatar::doSomething() {
             } else return;
             
         } else {
+            std::cerr << "G" << std::endl;
             handleTurningPoint();
         }
         
+            std::cerr << "H" << std::endl;
         move();
         
 //        if (getTicksToMove() == 0) m_waiting_to_roll = true; // TODO: IN BOO AND BOWSER NEED EXTRA STUFF AFTER
@@ -368,8 +405,12 @@ void Square::doSomething() {
     for (int pN = 1; pN <= 2; pN++) {
         PlayerAvatar* player = getStudentWorld()->getPlayerWithNumber(pN);
         
-        handlePlayer(player);
+        if (player != nullptr) handlePlayer(player);
     }
+}
+
+bool Square::canMove() const {
+    return true;
 }
 
 // #####################################
@@ -470,9 +511,11 @@ EventSquare::EventSquare(const int startX, const int startY) : Square(IID_EVENT_
 void EventSquare::handlePlayer(PlayerAvatar *player) {
 
     if (player->justLandedOn(this)) {
-        int option = randInt(1, 3);
+//        int option = randInt(1, 3);
+        int option = 1;
         switch (option) {
             case 1:
+                std::cerr << "TP" << std::endl;
                 player->teleportToRandomSquare();
                 getStudentWorld()->playSound(SOUND_PLAYER_TELEPORT);
                 break;

@@ -98,10 +98,20 @@ int StudentWorld::init()
                     addGridObject(m_peach);
                     // TODO: I THINK PEACH IS NULL????? OR MAYBE NOT
                     
-                    m_yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 2);
-                    addGridObject(m_yoshi);
+//                    m_yoshi = new PlayerAvatar(IID_YOSHI, x * SPRITE_WIDTH, y * SPRITE_HEIGHT, 2);
+//                    addGridObject(m_yoshi);
                     // TODO: BRING HIM BACK
                     
+                    break;
+                }
+                case Board::bowser: {
+                    Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
+                    addGridObject(gop);
+                    break;
+                }
+                case Board::boo: {
+                    Actor* gop = new CoinSquare(x * SPRITE_WIDTH, y * SPRITE_HEIGHT, true);
+                    addGridObject(gop);
                     break;
                 }
                 
@@ -157,10 +167,10 @@ int StudentWorld::move()
     // VOR
     if (m_peach->hasVortex()) gst << " VOR";
     
-    gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
-    
-    // VOR
-    if (m_yoshi->hasVortex()) gst << " VOR";
+//    gst << " | Time: " << timeRemaining() << " | Bank: " << getBankCoins() << " | P2 Roll: " << m_yoshi->getSquaresToMove() << " Stars: " << m_yoshi->getStars() << " $$: " << m_yoshi->getCoins();
+//    
+//    // VOR
+//    if (m_yoshi->hasVortex()) gst << " VOR";
     
     setGameStatText(gst.str());
     
@@ -218,7 +228,7 @@ bool StudentWorld::isWalkable(int screenX, int screenY) {
     else return true;
 }
 
-int StudentWorld::emptyBank() const {
+int StudentWorld::emptyBank() {
     int tempBankCoins = m_bank_coins;
     m_bank_coins = 0;
     return tempBankCoins;
@@ -246,6 +256,21 @@ PlayerAvatar* StudentWorld::getPlayerWithNumber(int playerNum) const {
 PlayerAvatar* StudentWorld::getOtherPlayer(PlayerAvatar* thisPlayer) const {
     if (thisPlayer == m_peach) return m_yoshi;
     else return m_peach;
+}
+
+Actor* StudentWorld::getRandomSquare() const {
+    int i = randInt(0, ((int) m_objects.size()) - 1);
+    for (int k = 0; k < m_objects.size(); k++) {
+        
+        if (m_objects[i]->canMove() && m_objects[i]->isActive()) {
+            return m_objects[i];
+        }
+        
+        i++;
+        i %= m_objects.size();
+    }
+    
+    return nullptr;
 }
 
 

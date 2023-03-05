@@ -10,6 +10,7 @@
 //#include "GraphObject.h"
 class Actor;
 class PlayerAvatar;
+class Square;
 
 class StudentWorld : public GameWorld
 {
@@ -21,13 +22,14 @@ class StudentWorld : public GameWorld
     
         Board& getBoard();
         bool isWalkable(int screenX, int screenY); // CANT BE CONST BC OF STUPID BOARD CLASS
-        int emptyBank() const;
+        int emptyBank();
         int getBankCoins() const;
         void changeBankCoins(int delta);
     
         PlayerAvatar* getPlayerWithNumber(int playerNum) const;
         PlayerAvatar* getOtherPlayer(PlayerAvatar* thisPlayer) const;
     
+        Actor* getRandomSquare() const;
     
         ~StudentWorld(); // TODO: IS THIS NECESSARY
 
