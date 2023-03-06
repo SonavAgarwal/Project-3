@@ -111,7 +111,6 @@ void Avatar::move() {
     
     if (getTicksToMove() == 0) {
         m_moving = false;
-//        m_just_landed = true;
     }
 }
 
