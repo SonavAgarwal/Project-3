@@ -48,7 +48,7 @@ class Avatar: public Actor {
         bool isAtFork();
         void setMoving(bool newMoving);
             
-        void teleportToRandomSquare();
+        virtual void teleportToRandomSquare();
         
         virtual bool canMove() const;
                 
@@ -80,7 +80,9 @@ class PlayerAvatar: public Avatar {
         void setJustLanded(bool newJustLanded);
         bool justLandedOn(Actor* other) const;
         bool isMovingOver(Actor* other) const;
-        
+    
+        virtual void teleportToRandomSquare();
+    
     private:
         int m_playerNum;
         int m_coins;

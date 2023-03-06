@@ -80,6 +80,7 @@ bool Avatar::canWalkInDirection(int walkDirection) const {
     int sX = getX();
     int sY = getY();
     
+    // check if between squares
     if (sX % SPRITE_WIDTH != 0) {
         if (walkDirection == up || walkDirection == down) return false;
     } else if (sY % SPRITE_HEIGHT != 0) {
@@ -91,6 +92,7 @@ bool Avatar::canWalkInDirection(int walkDirection) const {
     
     getPositionInThisDirection(walkDirection, distance, sX, sY);
     
+    // check if out of screen bounds
     if ((sX < 0) || (sY < 0)) return false;
     if ((sX >= VIEW_WIDTH) || (sY >= VIEW_HEIGHT)) return false;
         
@@ -134,7 +136,7 @@ void Avatar::move() {
 }
 
 void Avatar::handleTurningPoint() {
-    if (!canWalkInDirection(getWalkDirection())) {
+    if (!canWalkInDirection(getWalkDirection())) { // can't move in current direction
         if (getWalkDirection() == right || getWalkDirection() == left) {
             if (canWalkInDirection(up)) setWalkDirection(up);
             else setWalkDirection(down);
@@ -376,6 +378,11 @@ bool PlayerAvatar::justLandedOn(Actor *other) const {
 }
 bool PlayerAvatar::isMovingOver(Actor *other) const {
     return (getMoving() && isOn(other));
+}
+
+void PlayerAvatar::teleportToRandomSquare() {
+    Avatar::teleportToRandomSquare();
+    setJustLanded(true);
 }
 
 // #####################################
