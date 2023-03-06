@@ -391,7 +391,7 @@ void Baddie::doSomething() {
         m_pause_counter--;
         
         if (m_pause_counter == 0) {
-            rollMove(10);
+            rollMove(getMaxRoll());
             pointInRandomValidDirection();
         }
     }
@@ -458,6 +458,10 @@ void Bowser::handleLand() {
     }
 }
 
+int Bowser::getMaxRoll() const {
+    return 10;
+}
+
 // #####################################
 // BOO : BADDIE
 
@@ -474,6 +478,10 @@ void Boo::handlePlayer(PlayerAvatar *player) {
     getStudentWorld()->playSound(SOUND_BOO_ACTIVATE);
 }
 void Boo::handleLand() {}
+
+int Boo::getMaxRoll() const {
+    return 3;
+}
 
 // #####################################
 // SQUARE : ACTOR

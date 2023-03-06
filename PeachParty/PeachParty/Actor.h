@@ -104,6 +104,8 @@ class Baddie: public Avatar {
         
         virtual bool isImpactable();
         virtual void impact();
+    
+        virtual int getMaxRoll() const = 0;
         
     private:
         int m_pause_counter;
@@ -114,12 +116,14 @@ class Bowser: public Baddie {
         Bowser(const int startX, const int startY);
         virtual void handlePlayer(PlayerAvatar* player);
         virtual void handleLand();
+        virtual int getMaxRoll() const;
 };
 class Boo: public Baddie {
     public:
         Boo(const int startX, const int startY);
         virtual void handlePlayer(PlayerAvatar* player);
         virtual void handleLand();
+        virtual int getMaxRoll() const;
 };
 
 class Square: public Actor {
