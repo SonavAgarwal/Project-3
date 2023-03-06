@@ -337,7 +337,7 @@ void PlayerAvatar::swapMovement(PlayerAvatar* other) {
     setDirection(tempSpriteDirection);
     
 //    setJustLanded(false);
-    other->setJustLanded(false);
+    other->setJustLanded(false); // player being swapped onto event square should not activate it
 }
 
 bool PlayerAvatar::hasVortex() const {

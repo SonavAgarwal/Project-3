@@ -157,7 +157,8 @@ int StudentWorld::move()
     }
     
     // Update status text
-    ostringstream gst; // Format: P1 Roll: 3 Stars: 2 $$: 15 | Time: 75 | Bank: 9 | P2 Roll: 0 Stars: 1 $$: 22 VOR
+    ostringstream gst;
+    // Format: P1 Roll: 3 Stars: 2 $$: 15 | Time: 75 | Bank: 9 | P2 Roll: 0 Stars: 1 $$: 22 VOR
     
     gst << "P1 Roll: " << m_peach->getSquaresToMove() << " Stars: " << m_peach->getStars() << " $$: " << m_peach->getCoins();
     // Vortex
@@ -276,7 +277,7 @@ Actor* StudentWorld::getOneOverlappingImpactable(Actor* actor1) {
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         Actor* actor2 = *it;
         if (actor2->isImpactable()) {
-            if (!(( // NOT no overlap
+            if (!(( // NOT no overlap between bounding boxes
                 actor1->getX() + SPRITE_WIDTH <= actor2->getX()
             ) || (
                 actor1->getY() + SPRITE_HEIGHT <= actor2->getY()
