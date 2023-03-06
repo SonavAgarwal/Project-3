@@ -7,7 +7,7 @@
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
-// V1
+// V2
 
 class Actor;
 class PlayerAvatar;
@@ -37,7 +37,6 @@ class StudentWorld : public GameWorld
         Actor* getOneOverlappingImpactable(Actor* actor1);
     
         ~StudentWorld();
-
     private:
         
         std::vector<Actor*> m_objects;

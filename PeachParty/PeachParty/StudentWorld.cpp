@@ -10,7 +10,7 @@ GameWorld* createStudentWorld(string assetPath)
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h, and Actor.cpp
 
-// V1
+// V2
 
 #include <iostream>
 #include <sstream>
@@ -278,18 +278,8 @@ void StudentWorld::removeSquareAt(int rX, int rY) {// flags square for removal
 Actor* StudentWorld::getOneOverlappingImpactable(Actor* actor1) {
     for (vector<Actor*>::iterator it = m_objects.begin(); it != m_objects.end(); it++) {
         Actor* actor2 = *it;
-        if (actor2->isImpactable()) {
-            if (!(( // NOT no overlap between bounding boxes
-                actor1->getX() + SPRITE_WIDTH <= actor2->getX()
-            ) || (
-                actor1->getY() + SPRITE_HEIGHT <= actor2->getY()
-            ) || (
-                actor1->getX() >= actor2->getX() + SPRITE_WIDTH
-            ) || (
-                actor1->getY() >= actor2->getY() + SPRITE_HEIGHT
-                  ))) {
-                      return actor2;
-                  }
+        if (actor2->isImpactable() && actor2->overlapsWith(actor1)) {
+            return actor2;
         }
     }
     return nullptr;

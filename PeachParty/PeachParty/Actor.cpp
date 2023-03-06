@@ -5,7 +5,7 @@
 
 #include "GameConstants.h"
 
-// V1
+// V2
 
 // #####################################
 // ACTOR
@@ -38,6 +38,23 @@ bool Actor::isImpactable() {
     return false;
 }
 void Actor::impact() {}
+
+bool Actor::overlapsWith(Actor* other) const {
+    const Actor* actor1 = this;
+    const Actor* actor2 = other;
+    if (( // no overlap between bounding boxes
+        actor1->getX() + SPRITE_WIDTH <= actor2->getX()
+    ) || (
+        actor1->getY() + SPRITE_HEIGHT <= actor2->getY()
+    ) || (
+        actor1->getX() >= actor2->getX() + SPRITE_WIDTH
+    ) || (
+        actor1->getY() >= actor2->getY() + SPRITE_HEIGHT
+          )) {
+              return false;
+          }
+    return true;
+}
 
 // #####################################
 // AVATAR : ACTOR
@@ -189,7 +206,7 @@ PlayerAvatar::PlayerAvatar(const int imageID, const int startX, const int startY
     m_has_vortex = false;
     
     m_forced_direction = -1;
-    m_just_landed = false;
+    m_just_landed = true;
 
 }
 
@@ -242,7 +259,6 @@ void PlayerAvatar::doSomething() {
                     getStudentWorld()->playSound(SOUND_PLAYER_FIRE);
                     
                     m_has_vortex = false;
-                    
                 }
                 
                 break;
@@ -448,6 +464,7 @@ Bowser::Bowser(const int startX, const int startY) : Baddie(IID_BOWSER, startX, 
 void Bowser::handlePlayer(PlayerAvatar *player) {
     if (randInt(1, 2) == 1) {
         player->changeCoins(-1 * player->getCoins());
+        player->changeStars(-1 * player->getStars());
         getStudentWorld()->playSound(SOUND_BOWSER_ACTIVATE);
     }
 }

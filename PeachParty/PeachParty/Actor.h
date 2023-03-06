@@ -5,7 +5,7 @@
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
-// V1
+// V2
 
 class StudentWorld;
 
@@ -21,6 +21,7 @@ class Actor: public GraphObject {
         virtual bool canMove() const = 0;
         virtual bool isImpactable();
         virtual void impact();
+        virtual bool overlapsWith(Actor* other) const;
     private:
         bool m_active;
         StudentWorld* m_studentWorld;
@@ -95,8 +96,6 @@ class Baddie: public Avatar {
     public:
         Baddie(const int imageID, const int startX, const int startY);
         virtual void doSomething();
-        virtual void handlePlayer(PlayerAvatar* player) = 0;
-        virtual void handleLand() = 0;
         
         int getPauseCounter() const;
         void setPauseCounter(int newPauseCount);
@@ -112,6 +111,9 @@ class Baddie: public Avatar {
     private:
         int m_pause_counter;
         bool m_just_activated[2];
+    
+        virtual void handlePlayer(PlayerAvatar* player) = 0;
+        virtual void handleLand() = 0;
 };
 class Bowser: public Baddie {
     public:
@@ -132,39 +134,45 @@ class Square: public Actor {
     public:
         Square(const int imageID, const int startX, const int startY, const int direction);
         virtual void doSomething();
-        virtual void handlePlayer(PlayerAvatar* player) = 0;
         virtual bool canMove() const;
+    private:
+        virtual void handlePlayer(PlayerAvatar* player) = 0;
 };
 class CoinSquare: public Square {
     public:
         CoinSquare(const int startX, const int startY, bool adds);
-        virtual void handlePlayer(PlayerAvatar* player);
     private:
+        virtual void handlePlayer(PlayerAvatar* player);
         int m_delta_coins;
 };
 class StarSquare: public Square {
     public:
         StarSquare(const int startX, const int startY);
+    private:
         virtual void handlePlayer(PlayerAvatar* player);
 };
 class DirectionalSquare: public Square {
     public:
         DirectionalSquare(const int startX, const int startY, int direction);
+    private:
         virtual void handlePlayer(PlayerAvatar* player);
 };
 class BankSquare: public Square {
     public:
         BankSquare(const int startX, const int startY);
+    private:
         virtual void handlePlayer(PlayerAvatar* player);
 };
 class EventSquare: public Square {
     public:
         EventSquare(const int startX, const int startY);
+    private:
         virtual void handlePlayer(PlayerAvatar* player);
 };
 class DroppingSquare: public Square {
     public:
         DroppingSquare(const int startX, const int startY);
+    private:
         virtual void handlePlayer(PlayerAvatar* player);
 };
 
