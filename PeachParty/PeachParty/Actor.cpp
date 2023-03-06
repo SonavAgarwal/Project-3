@@ -355,7 +355,6 @@ void PlayerAvatar::swapMovement(PlayerAvatar* other) {
     other->setDirection(getDirection());
     setDirection(tempSpriteDirection);
     
-//    setJustLanded(false);
     other->setJustLanded(false); // player being swapped onto event square should not activate it
 }
 
